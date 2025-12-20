@@ -1,3 +1,5 @@
+import os
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 import parser
 import sys
 from datetime import datetime
@@ -73,8 +75,32 @@ def main(args):
         np.save(log_dir / "queries_descriptors.npy", queries_descriptors)
         np.save(log_dir / "database_descriptors.npy", database_descriptors)
 
+    # -------------------------------------------------------------------------
+    # FIX PER SEGMENTATION FAULT FAISS (macOS/M-chip) E NORMALIZZAZIONE
+    # -------------------------------------------------------------------------
+    # 1. Normalizzazione L2 (essenziale per stabilità e correttezza)
+    database_descriptors = database_descriptors / np.linalg.norm(database_descriptors, axis=1, keepdims=True)
+    queries_descriptors = queries_descriptors / np.linalg.norm(queries_descriptors, axis=1, keepdims=True)
+    
+    # 2. Forza Contiguità in Memoria (risolve il crash di FAISS)
+    database_descriptors = np.ascontiguousarray(database_descriptors, dtype=np.float32)
+    queries_descriptors = np.ascontiguousarray(queries_descriptors, dtype=np.float32)
+    # -------------------------------------------------------------------------
+
     # Use a kNN to find predictions
-    faiss_index = faiss.IndexFlatL2(args.descriptors_dimension)
+    # -------------------------------------------------------------------------
+    # MODIFICA PER SUPPORTARE DOT PRODUCT (IP) VS L2
+    # -------------------------------------------------------------------------
+    if args.distance_metric == "L2":
+        logger.info("Using L2 distance for retrieval")
+        faiss_index = faiss.IndexFlatL2(args.descriptors_dimension)
+    elif args.distance_metric == "dot_product":
+        logger.info("Using Dot Product (Inner Product) for retrieval")
+        faiss_index = faiss.IndexFlatIP(args.descriptors_dimension)
+    else:
+        raise ValueError(f"Unknown distance metric: {args.distance_metric}. Choose 'L2' or 'dot_product'.")
+    # -------------------------------------------------------------------------
+
     faiss_index.add(database_descriptors)
     del database_descriptors, all_descriptors
 

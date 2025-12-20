@@ -56,7 +56,7 @@ def parse_arguments():
     parser.add_argument(
         "--log_dir", type=str, default="default", help="experiment name, output logs will be saved under logs/log_dir"
     )
-    parser.add_argument("--device", type=str, default="cuda", choices=["cuda", "cpu"], help="_")
+    parser.add_argument("--device", type=str, default="cuda", choices=["cuda", "cpu","mps"], help="_")
     parser.add_argument(
         "--recall_values",
         type=int,
@@ -96,14 +96,27 @@ def parse_arguments():
         action="store_true",
         help="set to True if you want to save the data for uncertainty estimation",
     )
+    
+    # -------------------------------------------------------------------------
+    # NEW ARGUMENT FOR DISTANCE METRIC
+    # -------------------------------------------------------------------------
+    parser.add_argument(
+        "--distance_metric",
+        type=str,
+        default="L2",
+        choices=["L2", "dot_product"],
+        help="Distance metric for k-NN search: 'L2' (Euclidean) or 'dot_product' (Inner Product)."
+    )
+    # -------------------------------------------------------------------------
+
     args = parser.parse_args()
 
     args.use_labels = not args.no_labels
 
     if args.method == "netvlad":
-        if args.backbone not in [None, "VGG16"]:
-            raise ValueError("When using NetVLAD the backbone must be None or VGG16")
-        if args.descriptors_dimension not in [None, 4096, 32768]:
+        if args.backbone not in [None, "VGG16","ResNet50"]:
+            raise ValueError("When using NetVLAD the backbone must be None or VGG16 or ResNet50")
+        if args.descriptors_dimension not in [None, 4096, 32768,512]:
             raise ValueError("When using NetVLAD the descriptors_dimension must be one of [None, 4096, 32768]")
         if args.descriptors_dimension is None:
             args.descriptors_dimension = 4096
