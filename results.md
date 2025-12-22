@@ -11,11 +11,13 @@
 | cosplace | resnet50 | sf_xs   | L2     | 70.9 | 80.0 | 84.0 | 86.9 | 07:20 |
 | cosplace | resnet50 | sf_xs   | cosine | 70.9 | 80.0 | 84.0 | 86.9 | 07:19 |
 
-| Method  | Backbone | Dataset | Metric |  R@1 |  R@5 | R@10 | R@20 |  Time |
-| ------- | -------- | ------- | ------ | ---: | ---: | ---: | ---: | ----: |
-| netvlad | vgg16    | svox    | L2     | 86.6 | 93.7 | 95.5 | 96.9 | 43:03 |
-| netvlad | vgg16    | svox    | cosine | 86.6 | 93.7 | 95.5 | 96.9 | 43:10 |
-| mixvpr  | resnet50 | svox    | L2     | 97.8 | 98.9 | 99.2 | 99.3 | 42:22 |
-| mixvpr  | resnet50 | svox    | cosine | 97.8 | 98.9 | 99.2 | 99.3 | 44:27 |
-| megaloc | dinov2   | svox    | L2     | 98.7 | 99.5 | 99.6 | 99.7 | 44:28 |
-| megaloc | dinov2   | svox    | cosine | 98.7 | 99.5 | 99.6 | 99.7 | 44:56 |
+| Method   | Backbone | Dataset | Metric |  R@1 |  R@5 | R@10 | R@20 |  Time |
+| -------- | -------- | ------- | ------ | ---: | ---: | ---: | ---: | ----: |
+| netvlad  | vgg16    | svox    | L2     | 86.6 | 93.7 | 95.5 | 96.9 | 07:59 |
+| netvlad  | vgg16    | svox    | cosine | 86.6 | 93.7 | 95.5 | 96.9 | 08:06 |
+| mixvpr   | resnet50 | svox    | L2     | 97.8 | 98.9 | 99.2 | 99.3 | 03:52 |
+| mixvpr   | resnet50 | svox    | cosine | 97.8 | 98.9 | 99.2 | 99.3 | 03:41 |
+| megaloc  | dinov2   | svox    | L2     | 98.7 | 99.5 | 99.6 | 99.7 | 28:28 |
+| megaloc  | dinov2   | svox    | cosine | 98.7 | 99.5 | 99.6 | 99.7 | 28:56 |
+| cosplace | resnet50 | svox    | L2     | 97.1 | 98.4 | 98.7 | 99.0 | 04:37 |
+| cosplace | resnet50 | svox    | cosine | 97.1 | 98.4 | 98.7 | 99.0 | 04:43 |
