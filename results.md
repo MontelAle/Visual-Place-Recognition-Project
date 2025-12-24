@@ -21,3 +21,11 @@
 | megaloc  | dinov2   | svox    | cosine | 98.7 | 99.5 | 99.6 | 99.7 | 28:56 |
 | cosplace | resnet50 | svox    | L2     | 97.1 | 98.4 | 98.7 | 99.0 | 04:37 |
 | cosplace | resnet50 | svox    | cosine | 97.1 | 98.4 | 98.7 | 99.0 | 04:43 |
+
+# Task 2
+
+| Method   | Backbone | Dataset  | Metric | Matcher       |  R@1 |  R@5 | R@10 | R@20 | Time  |
+| -------- | -------- | -------- | ------ | ------------- | ---: | ---: | ---: | ---: | ----- |
+| cosplace | resnet50 | tokyo_xs | L2     | superpoint-lg | 86.0 | 89.2 | 89.8 | 91.4 | 58:42 |
+| cosplace | resnet50 | tokyo_xs | L2     | loftr         | 86.7 | 89.2 | 90.5 | 91.4 | 56:15 |
+| cosplace | resnet50 | tokyo_xs | L2     | superglue     | 84.8 | 88.6 | 90.2 | 91.4 | 57:37 |
