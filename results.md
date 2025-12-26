@@ -24,8 +24,11 @@
 
 # Task 2
 
-| Method   | Backbone | Dataset  | Metric | Matcher       |  R@1 |  R@5 | R@10 | R@20 | Time  |
-| -------- | -------- | -------- | ------ | ------------- | ---: | ---: | ---: | ---: | ----- |
-| cosplace | resnet50 | tokyo_xs | L2     | superpoint-lg | 86.0 | 89.2 | 89.8 | 91.4 | 58:42 |
-| cosplace | resnet50 | tokyo_xs | L2     | loftr         | 86.7 | 89.2 | 90.5 | 91.4 | 56:15 |
-| cosplace | resnet50 | tokyo_xs | L2     | superglue     | 84.8 | 88.6 | 90.2 | 91.4 | 57:37 |
+| Method   | Backbone | Dataset  | Metric | Matcher       |  R@1 |  R@5 | R@10 | R@20 | Time     |
+| -------- | -------- | -------- | ------ | ------------- | ---: | ---: | ---: | ---: | -------- |
+| cosplace | resnet50 | tokyo_xs | L2     | superpoint-lg | 86.0 | 89.2 | 89.8 | 91.4 | 18:42    |
+| cosplace | resnet50 | tokyo_xs | L2     | superglue     | 84.8 | 88.6 | 90.2 | 91.4 | 07:31    |
+| cosplace | resnet50 | tokyo_xs | L2     | loftr         | 86.7 | 89.2 | 90.5 | 91.4 | 19:39    |
+| cosplace | resnet50 | sf_xs    | L2     | superpoint-lg | 82.5 | 85.6 | 86.3 | 86.9 | 01:01:14 |
+| cosplace | resnet50 | sf_xs    | L2     | superglue     | 81.5 | 84.9 | 86.3 | 86.9 | 24:15    |
+| cosplace | resnet50 | sf_xs    | L2     | loftr         | 81.7 | 84.7 | 86.1 | 86.9 | 01:04:36 |
