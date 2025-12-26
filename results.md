@@ -61,3 +61,6 @@
 | megaloc | dinov2   | svox_night | L2     | superpoint-lg | 90.9 | 97.4 | 98.7 | 99.3 | 24:42    |
 | megaloc | dinov2   | svox_night | L2     | superglue     | 90.4 | 97.8 | 98.5 | 99.3 | 15:52    |
 | megaloc | dinov2   | svox_night | L2     | loftr         | 93.1 | 98.7 | 99.0 | 99.3 | 24:06    |
+| megaloc | dinov2   | svox_sun   | L2     | superpoint-lg | 95.8 | 98.9 | 99.4 | 99.6 | 25:22    |
+| megaloc | dinov2   | svox_sun   | L2     | superglue     | 94.1 | 98.5 | 99.3 | 99.6 | 16:20    |
+| megaloc | dinov2   | svox_sun   | L2     | loftr         | 97.1 | 99.3 | 99.5 | 99.6 | 24:32    |
