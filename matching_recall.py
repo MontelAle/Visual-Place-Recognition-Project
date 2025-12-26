@@ -78,10 +78,18 @@ def main(dry_run=False, method=None, backbone=None, descriptors_dimension=None, 
             "db": "data/sf_xs/test/database",
             "queries": "data/sf_xs/test/queries",
         },
-        "svox": {
+        "svox_sun": {
             "db": "data/svox/images/test/gallery",
-            "queries": "data/svox/images/test/queries",
+            "queries": "data/svox/images/test/queries_sun",
         },
+        "svox_night": {
+            "db": "data/svox/images/test/gallery",
+            "queries": "data/svox/images/test/queries_night",
+        },
+        "svox_night_sun": {
+            "db": "data/svox/images/test/gallery",
+            "queries": "data/svox/images/test/queries_night_sun"
+        }
     }
 
     # Matchers to run for each preds folder
