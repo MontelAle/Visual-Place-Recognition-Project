@@ -85,10 +85,6 @@ def main(dry_run=False, method=None, backbone=None, descriptors_dimension=None, 
         "svox_night": {
             "db": "data/svox/images/test/gallery",
             "queries": "data/svox/images/test/queries_night",
-        },
-        "svox_night_sun": {
-            "db": "data/svox/images/test/gallery",
-            "queries": "data/svox/images/test/queries_night_sun"
         }
     }
 
