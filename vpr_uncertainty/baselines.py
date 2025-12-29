@@ -51,7 +51,13 @@ def compute_sue(matched_array_for_aucpr, preds, ref_poses, dists, num_NN=10, slo
         for itr2 in range(num_NN):
             weights[itr2] = math.e ** ((-1*abs(dists[itr][itr2])) * slope) 
 
-        weights = weights/sum(abs(weights))
+        # Safe normalization: avoid division by zero which produces NaNs
+        denom = np.sum(np.abs(weights))
+        if denom == 0:
+            # fallback to uniform weights if all weights are zero
+            weights = np.ones_like(weights, dtype=float) / float(len(weights))
+        else:
+            weights = weights / denom
 
         mean_pose = np.asarray([np.average(nn_poses[:,0], weights=weights), np.average(nn_poses[:,1], weights=weights)])
 
