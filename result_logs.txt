@@ -1,0 +1,1228 @@
+-- COSPLACE --
+/usr/bin/python3 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir cosplace_ResNet50_tokyo_xs_L2 --method=cosplace --backbone=ResNet50 --descriptors_dimension=2048 --image_size 512 512 --database_folder data/tokyo_xs/test/database --queries_folder data/tokyo_xs/test/queries --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 11:20:39 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir cosplace_ResNet50_tokyo_xs_L2 --method=cosplace --backbone=ResNet50 --descriptors_dimension=2048 --image_size 512 512 --database_folder data/tokyo_xs/test/database --queries_folder data/tokyo_xs/test/queries --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 11:20:39 Arguments: Namespace(positive_dist_threshold=25, method='cosplace', backbone='ResNet50', descriptors_dimension=2048, database_folder='data/tokyo_xs/test/database', queries_folder='data/tokyo_xs/test/queries', num_workers=8, batch_size=32, log_dir='cosplace_ResNet50_tokyo_xs_L2', device='cuda', recall_values=[1, 5, 10, 20], no_labels=False, num_preds_to_save=20, save_only_wrong_preds=False, image_size=[512, 512], save_descriptors=False, save_for_uncertainty=True, distance_metric='L2', use_labels=True)
+2025-12-29 11:20:39 Testing with cosplace with a ResNet50 backbone and descriptors dimension 2048
+2025-12-29 11:20:39 The outputs are being saved in logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39
+/usr/local/lib/python3.12/dist-packages/torch/hub.py:335: UserWarning: You are about to download and run code from an untrusted repository. In a future release, this won't be allowed. To add the repository to your trusted list, change the command to {calling_fn}(..., trust_repo=False) and a command prompt will appear asking for an explicit confirmation of trust, or load(..., trust_repo=True), which will assume that the prompt is to be answered with 'yes'. You can also use load(..., trust_repo='check') which will only prompt for confirmation if the repo is not already trusted. This will eventually be the default behaviour
+  warnings.warn(
+Downloading: "https://github.com/gmberton/cosplace/zipball/main" to /root/.cache/torch/hub/main.zip
+Returning CosPlace model with backbone: ResNet50 with features dimension 2048
+Downloading: "https://download.pytorch.org/models/resnet50-11ad3fa6.pth" to /root/.cache/torch/hub/checkpoints/resnet50-11ad3fa6.pth
+100% 97.8M/97.8M [00:00<00:00, 182MB/s]
+Downloading: "https://github.com/gmberton/CosPlace/releases/download/v1.0/ResNet50_2048_cosplace.pth" to /root/.cache/torch/hub/checkpoints/ResNet50_2048_cosplace.pth
+100% 106M/106M [00:00<00:00, 127MB/s] 
+Searching test images in data/tokyo_xs/test/database with glob()
+Searching test images in data/tokyo_xs/test/queries with glob()
+2025-12-29 11:20:43 Testing on < #queries: 315; #database: 12771 >
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 2, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+100% 400/400 [03:23<00:00,  1.97it/s]
+100% 315/315 [00:06<00:00, 48.51it/s]
+2025-12-29 11:24:14 Using L2 distance for retrieval
+/content/Visual-Place-Recognition-Project/VPR-methods-evaluation/main.py:116: DeprecationWarning: `in1d` is deprecated. Use `np.isin` instead.
+  if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
+2025-12-29 11:24:14 R@1: 73.3, R@5: 83.8, R@10: 87.9, R@20: 91.4
+2025-12-29 11:24:14 Saving final predictions
+Saving preds in logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/preds: 100% 315/315 [01:10<00:00,  4.47it/s]
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/preds' --matcher 'superpoint-lg' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 4.96M/4.96M [00:00<00:00, 115MB/s]
+100% 45.3M/45.3M [00:00<00:00, 116MB/s]
+100% 315/315 [18:30<00:00,  3.53s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/preds_superpoint-lg' --num-preds 20 --recall-values 1 5 10 20
+100% 315/315 [00:01<00:00, 212.93it/s]
+R@1: 86.0, R@5: 89.2, R@10: 89.8, R@20: 91.4
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/preds_superpoint-lg' --z-data-path '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/z_data.torch'
+Computing L2 scores: 100% 315/315 [00:00<00:00, 1333204.60it/s]
+Computing PA scores: 100% 315/315 [00:00<00:00, 1009324.49it/s]
+Computing SUE scores: 100% 315/315 [00:00<00:00, 12049.63it/s]
+L2-distance: 93.8
+PA-score: 90.3
+SUE: 80.9
+Random: 71.1
+Inliers: 98.8
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/preds' --matcher 'superglue' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/imatch-toolbox/immatch/modules/../../third_party/patch2pix/networks/ncn/model.py:233: SyntaxWarning: "is not" with 'str' literal. Did you mean "!="?
+  if checkpoint is not None and checkpoint is not '':
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/imatch-toolbox/immatch/modules/../../third_party/patch2pix/networks/ncn/model.py:264: SyntaxWarning: "is not" with 'str' literal. Did you mean "!="?
+  if checkpoint is not None and checkpoint is not '':
+100% 315/315 [07:25<00:00,  1.41s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/preds_superglue' --num-preds 20 --recall-values 1 5 10 20
+100% 315/315 [00:00<00:00, 515.29it/s]
+R@1: 84.8, R@5: 88.6, R@10: 90.2, R@20: 91.4
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/preds_superglue' --z-data-path '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/z_data.torch'
+Computing L2 scores: 100% 315/315 [00:00<00:00, 1369125.14it/s]
+Computing PA scores: 100% 315/315 [00:00<00:00, 896340.41it/s]
+Computing SUE scores: 100% 315/315 [00:00<00:00, 12175.55it/s]
+L2-distance: 93.8
+PA-score: 90.3
+SUE: 80.9
+Random: 71.1
+Inliers: 99.0
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/preds' --matcher 'loftr' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 44.2M/44.2M [00:02<00:00, 16.6MB/s]
+100% 315/315 [19:16<00:00,  3.67s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/preds_loftr' --num-preds 20 --recall-values 1 5 10 20
+100% 315/315 [00:00<00:00, 624.07it/s]
+R@1: 86.7, R@5: 89.2, R@10: 90.5, R@20: 91.4
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/preds_loftr' --z-data-path '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_tokyo_xs_L2/2025-12-29_11-20-39/z_data.torch'
+Computing L2 scores: 100% 315/315 [00:00<00:00, 1330519.40it/s]
+Computing PA scores: 100% 315/315 [00:00<00:00, 1057810.86it/s]
+Computing SUE scores: 100% 315/315 [00:00<00:00, 10108.61it/s]
+L2-distance: 93.8
+PA-score: 90.3
+SUE: 80.9
+Random: 71.1
+Inliers: 99.1
+/usr/bin/python3 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir cosplace_ResNet50_sf_xs_L2 --method=cosplace --backbone=ResNet50 --descriptors_dimension=2048 --image_size 512 512 --database_folder data/sf_xs/test/database --queries_folder data/sf_xs/test/queries --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 12:11:27 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir cosplace_ResNet50_sf_xs_L2 --method=cosplace --backbone=ResNet50 --descriptors_dimension=2048 --image_size 512 512 --database_folder data/sf_xs/test/database --queries_folder data/sf_xs/test/queries --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 12:11:27 Arguments: Namespace(positive_dist_threshold=25, method='cosplace', backbone='ResNet50', descriptors_dimension=2048, database_folder='data/sf_xs/test/database', queries_folder='data/sf_xs/test/queries', num_workers=8, batch_size=32, log_dir='cosplace_ResNet50_sf_xs_L2', device='cuda', recall_values=[1, 5, 10, 20], no_labels=False, num_preds_to_save=20, save_only_wrong_preds=False, image_size=[512, 512], save_descriptors=False, save_for_uncertainty=True, distance_metric='L2', use_labels=True)
+2025-12-29 12:11:27 Testing with cosplace with a ResNet50 backbone and descriptors dimension 2048
+2025-12-29 12:11:27 The outputs are being saved in logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27
+Using cache found in /root/.cache/torch/hub/gmberton_cosplace_main
+Returning CosPlace model with backbone: ResNet50 with features dimension 2048
+Searching test images in data/sf_xs/test/database with glob()
+Searching test images in data/sf_xs/test/queries with glob()
+2025-12-29 12:11:29 Testing on < #queries: 1000; #database: 27191 >
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 2, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+100% 850/850 [07:10<00:00,  1.97it/s]
+100% 1000/1000 [00:20<00:00, 48.70it/s]
+2025-12-29 12:19:01 Using L2 distance for retrieval
+/content/Visual-Place-Recognition-Project/VPR-methods-evaluation/main.py:116: DeprecationWarning: `in1d` is deprecated. Use `np.isin` instead.
+  if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
+2025-12-29 12:19:02 R@1: 70.9, R@5: 80.0, R@10: 84.0, R@20: 86.9
+2025-12-29 12:19:02 Saving final predictions
+Saving preds in logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/preds: 100% 1000/1000 [03:41<00:00,  4.52it/s]
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/preds' --matcher 'superpoint-lg' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 1000/1000 [58:40<00:00,  3.52s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/preds_superpoint-lg' --num-preds 20 --recall-values 1 5 10 20
+100% 1000/1000 [00:04<00:00, 214.10it/s]
+R@1: 82.5, R@5: 85.6, R@10: 86.3, R@20: 86.9
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/preds_superpoint-lg' --z-data-path '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/z_data.torch'
+Computing L2 scores: 100% 1000/1000 [00:00<00:00, 1529093.69it/s]
+Computing PA scores: 100% 1000/1000 [00:00<00:00, 1087734.44it/s]
+Computing SUE scores: 100% 1000/1000 [00:00<00:00, 12322.60it/s]
+L2-distance: 94.1
+PA-score: 91.1
+SUE: 84.2
+Random: 69.1
+Inliers: 98.3
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/preds' --matcher 'superglue' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 1000/1000 [23:22<00:00,  1.40s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/preds_superglue' --num-preds 20 --recall-values 1 5 10 20
+100% 1000/1000 [00:01<00:00, 535.68it/s]
+R@1: 81.5, R@5: 84.9, R@10: 86.3, R@20: 86.9
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/preds_superglue' --z-data-path '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/z_data.torch'
+Computing L2 scores: 100% 1000/1000 [00:00<00:00, 1538629.49it/s]
+Computing PA scores: 100% 1000/1000 [00:00<00:00, 1107845.75it/s]
+Computing SUE scores: 100% 1000/1000 [00:00<00:00, 12342.14it/s]
+L2-distance: 94.1
+PA-score: 91.1
+SUE: 84.2
+Random: 69.1
+Inliers: 97.5
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/preds' --matcher 'loftr' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 1000/1000 [1:01:22<00:00,  3.68s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/preds_loftr' --num-preds 20 --recall-values 1 5 10 20
+100% 1000/1000 [00:01<00:00, 600.10it/s]
+R@1: 81.7, R@5: 84.7, R@10: 86.1, R@20: 86.9
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/preds_loftr' --z-data-path '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_sf_xs_L2/2025-12-29_12-11-27/z_data.torch'
+Computing L2 scores: 100% 1000/1000 [00:00<00:00, 1473236.39it/s]
+Computing PA scores: 100% 1000/1000 [00:00<00:00, 1111368.31it/s]
+Computing SUE scores: 100% 1000/1000 [00:00<00:00, 12554.56it/s]
+L2-distance: 94.1
+PA-score: 91.1
+SUE: 84.2
+Random: 69.1
+Inliers: 98.1
+/usr/bin/python3 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir cosplace_ResNet50_svox_sun_L2 --method=cosplace --backbone=ResNet50 --descriptors_dimension=2048 --image_size 512 512 --database_folder data/svox/images/test/gallery --queries_folder data/svox/images/test/queries_sun --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 14:47:03 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir cosplace_ResNet50_svox_sun_L2 --method=cosplace --backbone=ResNet50 --descriptors_dimension=2048 --image_size 512 512 --database_folder data/svox/images/test/gallery --queries_folder data/svox/images/test/queries_sun --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 14:47:03 Arguments: Namespace(positive_dist_threshold=25, method='cosplace', backbone='ResNet50', descriptors_dimension=2048, database_folder='data/svox/images/test/gallery', queries_folder='data/svox/images/test/queries_sun', num_workers=8, batch_size=32, log_dir='cosplace_ResNet50_svox_sun_L2', device='cuda', recall_values=[1, 5, 10, 20], no_labels=False, num_preds_to_save=20, save_only_wrong_preds=False, image_size=[512, 512], save_descriptors=False, save_for_uncertainty=True, distance_metric='L2', use_labels=True)
+2025-12-29 14:47:03 Testing with cosplace with a ResNet50 backbone and descriptors dimension 2048
+2025-12-29 14:47:03 The outputs are being saved in logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03
+Using cache found in /root/.cache/torch/hub/gmberton_cosplace_main
+Returning CosPlace model with backbone: ResNet50 with features dimension 2048
+Searching test images in data/svox/images/test/gallery with glob()
+Searching test images in data/svox/images/test/queries_sun with glob()
+2025-12-29 14:47:05 Testing on < #queries: 854; #database: 17166 >
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 2, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+100% 537/537 [04:34<00:00,  1.96it/s]
+100% 854/854 [00:17<00:00, 50.10it/s]
+2025-12-29 14:51:56 Using L2 distance for retrieval
+/content/Visual-Place-Recognition-Project/VPR-methods-evaluation/main.py:116: DeprecationWarning: `in1d` is deprecated. Use `np.isin` instead.
+  if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
+2025-12-29 14:51:57 R@1: 77.0, R@5: 89.0, R@10: 92.4, R@20: 95.0
+2025-12-29 14:51:57 Saving final predictions
+Saving preds in logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/preds: 100% 854/854 [02:28<00:00,  5.77it/s]
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/preds' --matcher 'superpoint-lg' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 854/854 [49:58<00:00,  3.51s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/preds_superpoint-lg' --num-preds 20 --recall-values 1 5 10 20
+100% 854/854 [00:04<00:00, 199.76it/s]
+R@1: 90.4, R@5: 93.4, R@10: 94.6, R@20: 95.0
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/preds_superpoint-lg' --z-data-path '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/z_data.torch'
+Computing L2 scores: 100% 854/854 [00:00<00:00, 840435.39it/s]
+Computing PA scores: 100% 854/854 [00:00<00:00, 554221.82it/s]
+Computing SUE scores: 100% 854/854 [00:00<00:00, 6389.17it/s]
+L2-distance: 87.9
+PA-score: 91.3
+SUE: 80.9
+Random: 74.9
+Inliers: 97.1
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/preds' --matcher 'superglue' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 854/854 [20:57<00:00,  1.47s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/preds_superglue' --num-preds 20 --recall-values 1 5 10 20
+100% 854/854 [00:01<00:00, 453.99it/s]
+R@1: 87.6, R@5: 92.6, R@10: 94.3, R@20: 95.0
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/preds_superglue' --z-data-path '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/z_data.torch'
+Computing L2 scores: 100% 854/854 [00:00<00:00, 1420839.20it/s]
+Computing PA scores: 100% 854/854 [00:00<00:00, 1056929.95it/s]
+Computing SUE scores: 100% 854/854 [00:00<00:00, 12386.10it/s]
+L2-distance: 87.9
+PA-score: 91.3
+SUE: 80.9
+Random: 74.9
+Inliers: 97.3
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/preds' --matcher 'loftr' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 854/854 [51:56<00:00,  3.65s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/preds_loftr' --num-preds 20 --recall-values 1 5 10 20
+100% 854/854 [00:01<00:00, 518.79it/s]
+R@1: 92.0, R@5: 93.8, R@10: 94.5, R@20: 95.0
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/preds_loftr' --z-data-path '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_sun_L2/2025-12-29_14-47-03/z_data.torch'
+Computing L2 scores: 100% 854/854 [00:00<00:00, 1414666.52it/s]
+Computing PA scores: 100% 854/854 [00:00<00:00, 1078571.40it/s]
+Computing SUE scores: 100% 854/854 [00:00<00:00, 11928.10it/s]
+L2-distance: 87.9
+PA-score: 91.3
+SUE: 80.9
+Random: 74.9
+Inliers: 98.1
+/usr/bin/python3 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir cosplace_ResNet50_svox_night_L2 --method=cosplace --backbone=ResNet50 --descriptors_dimension=2048 --image_size 512 512 --database_folder data/svox/images/test/gallery --queries_folder data/svox/images/test/queries_night --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 16:58:10 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir cosplace_ResNet50_svox_night_L2 --method=cosplace --backbone=ResNet50 --descriptors_dimension=2048 --image_size 512 512 --database_folder data/svox/images/test/gallery --queries_folder data/svox/images/test/queries_night --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 16:58:10 Arguments: Namespace(positive_dist_threshold=25, method='cosplace', backbone='ResNet50', descriptors_dimension=2048, database_folder='data/svox/images/test/gallery', queries_folder='data/svox/images/test/queries_night', num_workers=8, batch_size=32, log_dir='cosplace_ResNet50_svox_night_L2', device='cuda', recall_values=[1, 5, 10, 20], no_labels=False, num_preds_to_save=20, save_only_wrong_preds=False, image_size=[512, 512], save_descriptors=False, save_for_uncertainty=True, distance_metric='L2', use_labels=True)
+2025-12-29 16:58:10 Testing with cosplace with a ResNet50 backbone and descriptors dimension 2048
+2025-12-29 16:58:10 The outputs are being saved in logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10
+Using cache found in /root/.cache/torch/hub/gmberton_cosplace_main
+Returning CosPlace model with backbone: ResNet50 with features dimension 2048
+Searching test images in data/svox/images/test/gallery with glob()
+Searching test images in data/svox/images/test/queries_night with glob()
+2025-12-29 16:58:12 Testing on < #queries: 823; #database: 17166 >
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 2, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+100% 537/537 [04:36<00:00,  1.94it/s]
+100% 823/823 [00:16<00:00, 49.82it/s]
+2025-12-29 17:03:05 Using L2 distance for retrieval
+/content/Visual-Place-Recognition-Project/VPR-methods-evaluation/main.py:116: DeprecationWarning: `in1d` is deprecated. Use `np.isin` instead.
+  if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
+2025-12-29 17:03:05 R@1: 49.2, R@5: 66.1, R@10: 72.8, R@20: 78.6
+2025-12-29 17:03:05 Saving final predictions
+Saving preds in logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/preds: 100% 823/823 [02:25<00:00,  5.64it/s]
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/preds' --matcher 'superpoint-lg' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 823/823 [48:02<00:00,  3.50s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/preds_superpoint-lg' --num-preds 20 --recall-values 1 5 10 20
+100% 823/823 [00:03<00:00, 208.96it/s]
+R@1: 72.2, R@5: 75.8, R@10: 77.4, R@20: 78.6
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/preds_superpoint-lg' --z-data-path '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/z_data.torch'
+Computing L2 scores: 100% 823/823 [00:00<00:00, 823845.39it/s]
+Computing PA scores: 100% 823/823 [00:00<00:00, 582797.94it/s]
+Computing SUE scores: 100% 823/823 [00:00<00:00, 7182.45it/s]
+L2-distance: 69.1
+PA-score: 61.6
+SUE: 58.6
+Random: 51.0
+Inliers: 97.5
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/preds' --matcher 'superglue' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 823/823 [19:52<00:00,  1.45s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/preds_superglue' --num-preds 20 --recall-values 1 5 10 20
+100% 823/823 [00:01<00:00, 473.75it/s]
+R@1: 71.3, R@5: 75.7, R@10: 76.9, R@20: 78.6
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/preds_superglue' --z-data-path '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/z_data.torch'
+Computing L2 scores: 100% 823/823 [00:00<00:00, 1410094.85it/s]
+Computing PA scores: 100% 823/823 [00:00<00:00, 1004046.59it/s]
+Computing SUE scores: 100% 823/823 [00:00<00:00, 11975.78it/s]
+L2-distance: 69.1
+PA-score: 61.6
+SUE: 58.6
+Random: 51.0
+Inliers: 97.0
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/preds' --matcher 'loftr' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 823/823 [49:58<00:00,  3.64s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/preds_loftr' --num-preds 20 --recall-values 1 5 10 20
+100% 823/823 [00:01<00:00, 678.99it/s]
+R@1: 72.2, R@5: 77.0, R@10: 78.1, R@20: 78.6
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/preds_loftr' --z-data-path '/content/Visual-Place-Recognition-Project/logs/cosplace_ResNet50_svox_night_L2/2025-12-29_16-58-10/z_data.torch'
+Computing L2 scores: 100% 823/823 [00:00<00:00, 816247.86it/s]
+Computing PA scores: 100% 823/823 [00:00<00:00, 620735.87it/s]
+Computing SUE scores: 100% 823/823 [00:00<00:00, 6153.22it/s]
+L2-distance: 69.1
+PA-score: 61.6
+SUE: 58.6
+Random: 51.0
+Inliers: 97.4
+
+--- Megaloc ---
+/usr/bin/python3 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir megaloc_Dinov2_tokyo_xs_L2 --method=megaloc --backbone=Dinov2 --descriptors_dimension=8448 --image_size 512 512 --database_folder data/tokyo_xs/test/database --queries_folder data/tokyo_xs/test/queries --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 11:18:38 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir megaloc_Dinov2_tokyo_xs_L2 --method=megaloc --backbone=Dinov2 --descriptors_dimension=8448 --image_size 512 512 --database_folder data/tokyo_xs/test/database --queries_folder data/tokyo_xs/test/queries --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 11:18:38 Arguments: Namespace(positive_dist_threshold=25, method='megaloc', backbone='Dinov2', descriptors_dimension=8448, database_folder='data/tokyo_xs/test/database', queries_folder='data/tokyo_xs/test/queries', num_workers=8, batch_size=32, log_dir='megaloc_Dinov2_tokyo_xs_L2', device='cuda', recall_values=[1, 5, 10, 20], no_labels=False, num_preds_to_save=20, save_only_wrong_preds=False, image_size=[512, 512], save_descriptors=False, save_for_uncertainty=True, distance_metric='L2', use_labels=True)
+2025-12-29 11:18:38 Testing with megaloc with a Dinov2 backbone and descriptors dimension 8448
+2025-12-29 11:18:38 The outputs are being saved in logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38
+/usr/local/lib/python3.12/dist-packages/torch/hub.py:335: UserWarning: You are about to download and run code from an untrusted repository. In a future release, this won't be allowed. To add the repository to your trusted list, change the command to {calling_fn}(..., trust_repo=False) and a command prompt will appear asking for an explicit confirmation of trust, or load(..., trust_repo=True), which will assume that the prompt is to be answered with 'yes'. You can also use load(..., trust_repo='check') which will only prompt for confirmation if the repo is not already trusted. This will eventually be the default behaviour
+  warnings.warn(
+Downloading: "https://github.com/gmberton/MegaLoc/zipball/main" to /root/.cache/torch/hub/main.zip
+Downloading: "https://github.com/facebookresearch/dinov2/zipball/main" to /root/.cache/torch/hub/main.zip
+/root/.cache/torch/hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/root/.cache/torch/hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/root/.cache/torch/hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+Downloading: "https://github.com/gmberton/MegaLoc/releases/download/v1.0/megaloc.torch" to /root/.cache/torch/hub/checkpoints/megaloc.torch
+100% 872M/872M [00:15<00:00, 59.3MB/s]
+Searching test images in data/tokyo_xs/test/database with glob()
+Searching test images in data/tokyo_xs/test/queries with glob()
+2025-12-29 11:19:01 Testing on < #queries: 315; #database: 12771 >
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 2, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+100% 400/400 [21:50<00:00,  3.28s/it]
+100% 315/315 [00:33<00:00,  9.52it/s]
+2025-12-29 11:41:25 Using L2 distance for retrieval
+/content/Visual-Place-Recognition-Project/VPR-methods-evaluation/main.py:116: DeprecationWarning: `in1d` is deprecated. Use `np.isin` instead.
+  if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
+2025-12-29 11:41:27 R@1: 95.6, R@5: 97.8, R@10: 98.7, R@20: 99.0
+2025-12-29 11:41:27 Saving final predictions
+Saving preds in logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/preds: 100% 315/315 [01:12<00:00,  4.36it/s]
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/preds' --matcher 'superpoint-lg' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 4.96M/4.96M [00:00<00:00, 129MB/s]
+100% 45.3M/45.3M [00:00<00:00, 129MB/s]
+100% 315/315 [18:40<00:00,  3.56s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/preds_superpoint-lg' --num-preds 20 --recall-values 1 5 10 20
+100% 315/315 [00:01<00:00, 207.11it/s]
+R@1: 94.3, R@5: 98.4, R@10: 98.7, R@20: 99.0
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/preds_superpoint-lg' --z-data-path '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/z_data.torch'
+Computing L2 scores: 100% 315/315 [00:00<00:00, 786432.00it/s]
+Computing PA scores: 100% 315/315 [00:00<00:00, 583829.32it/s]
+Computing SUE scores: 100% 315/315 [00:00<00:00, 8620.23it/s]
+L2-distance: 99.5
+PA-score: 99.3
+SUE: 98.5
+Random: 94.9
+Inliers: 99.8
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/preds' --matcher 'superglue' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/imatch-toolbox/immatch/modules/../../third_party/patch2pix/networks/ncn/model.py:233: SyntaxWarning: "is not" with 'str' literal. Did you mean "!="?
+  if checkpoint is not None and checkpoint is not '':
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/imatch-toolbox/immatch/modules/../../third_party/patch2pix/networks/ncn/model.py:264: SyntaxWarning: "is not" with 'str' literal. Did you mean "!="?
+  if checkpoint is not None and checkpoint is not '':
+100% 315/315 [07:37<00:00,  1.45s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/preds_superglue' --num-preds 20 --recall-values 1 5 10 20
+100% 315/315 [00:00<00:00, 506.44it/s]
+R@1: 93.0, R@5: 98.1, R@10: 98.4, R@20: 99.0
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/preds_superglue' --z-data-path '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/z_data.torch'
+Computing L2 scores: 100% 315/315 [00:00<00:00, 881391.43it/s]
+Computing PA scores: 100% 315/315 [00:00<00:00, 588510.36it/s]
+Computing SUE scores: 100% 315/315 [00:00<00:00, 6786.76it/s]
+L2-distance: 99.5
+PA-score: 99.3
+SUE: 98.5
+Random: 94.9
+Inliers: 99.6
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/preds' --matcher 'loftr' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 44.2M/44.2M [00:08<00:00, 5.26MB/s]
+100% 315/315 [19:40<00:00,  3.75s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/preds_loftr' --num-preds 20 --recall-values 1 5 10 20
+100% 315/315 [00:00<00:00, 601.69it/s]
+R@1: 94.3, R@5: 97.8, R@10: 98.7, R@20: 99.0
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/preds_loftr' --z-data-path '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_tokyo_xs_L2/2025-12-29_11-18-38/z_data.torch'
+Computing L2 scores: 100% 315/315 [00:00<00:00, 1392208.39it/s]
+Computing PA scores: 100% 315/315 [00:00<00:00, 848013.97it/s]
+Computing SUE scores: 100% 315/315 [00:00<00:00, 11672.46it/s]
+L2-distance: 99.5
+PA-score: 99.3
+SUE: 98.5
+Random: 94.9
+Inliers: 99.8
+/usr/bin/python3 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir megaloc_Dinov2_sf_xs_L2 --method=megaloc --backbone=Dinov2 --descriptors_dimension=8448 --image_size 512 512 --database_folder data/sf_xs/test/database --queries_folder data/sf_xs/test/queries --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 12:29:33 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir megaloc_Dinov2_sf_xs_L2 --method=megaloc --backbone=Dinov2 --descriptors_dimension=8448 --image_size 512 512 --database_folder data/sf_xs/test/database --queries_folder data/sf_xs/test/queries --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 12:29:33 Arguments: Namespace(positive_dist_threshold=25, method='megaloc', backbone='Dinov2', descriptors_dimension=8448, database_folder='data/sf_xs/test/database', queries_folder='data/sf_xs/test/queries', num_workers=8, batch_size=32, log_dir='megaloc_Dinov2_sf_xs_L2', device='cuda', recall_values=[1, 5, 10, 20], no_labels=False, num_preds_to_save=20, save_only_wrong_preds=False, image_size=[512, 512], save_descriptors=False, save_for_uncertainty=True, distance_metric='L2', use_labels=True)
+2025-12-29 12:29:33 Testing with megaloc with a Dinov2 backbone and descriptors dimension 8448
+2025-12-29 12:29:33 The outputs are being saved in logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33
+Using cache found in /root/.cache/torch/hub/gmberton_MegaLoc_main
+Using cache found in /root/.cache/torch/hub/facebookresearch_dinov2_main
+/root/.cache/torch/hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/root/.cache/torch/hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/root/.cache/torch/hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+Searching test images in data/sf_xs/test/database with glob()
+Searching test images in data/sf_xs/test/queries with glob()
+2025-12-29 12:29:38 Testing on < #queries: 1000; #database: 27191 >
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 2, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+100% 850/850 [46:30<00:00,  3.28s/it]
+100% 1000/1000 [01:44<00:00,  9.59it/s]
+2025-12-29 13:17:54 Using L2 distance for retrieval
+/content/Visual-Place-Recognition-Project/VPR-methods-evaluation/main.py:116: DeprecationWarning: `in1d` is deprecated. Use `np.isin` instead.
+  if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
+2025-12-29 13:18:01 R@1: 86.9, R@5: 90.4, R@10: 91.2, R@20: 91.5
+2025-12-29 13:18:01 Saving final predictions
+Saving preds in logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/preds: 100% 1000/1000 [03:51<00:00,  4.32it/s]
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/preds' --matcher 'superpoint-lg' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 1000/1000 [59:19<00:00,  3.56s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/preds_superpoint-lg' --num-preds 20 --recall-values 1 5 10 20
+100% 1000/1000 [00:05<00:00, 186.03it/s]
+R@1: 87.0, R@5: 90.6, R@10: 91.3, R@20: 91.5
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/preds_superpoint-lg' --z-data-path '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/z_data.torch'
+Computing L2 scores: 100% 1000/1000 [00:00<00:00, 1609479.66it/s]
+Computing PA scores: 100% 1000/1000 [00:00<00:00, 1051467.54it/s]
+Computing SUE scores: 100% 1000/1000 [00:00<00:00, 12071.78it/s]
+L2-distance: 99.1
+PA-score: 96.7
+SUE: 94.4
+Random: 86.3
+Inliers: 99.0
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/preds' --matcher 'superglue' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 1000/1000 [23:42<00:00,  1.42s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/preds_superglue' --num-preds 20 --recall-values 1 5 10 20
+100% 1000/1000 [00:02<00:00, 459.80it/s]
+R@1: 85.8, R@5: 89.9, R@10: 90.7, R@20: 91.5
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/preds_superglue' --z-data-path '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/z_data.torch'
+Computing L2 scores: 100% 1000/1000 [00:00<00:00, 1454335.64it/s]
+Computing PA scores: 100% 1000/1000 [00:00<00:00, 936019.64it/s]
+Computing SUE scores: 100% 1000/1000 [00:00<00:00, 12146.91it/s]
+L2-distance: 99.1
+PA-score: 96.7
+SUE: 94.4
+Random: 86.3
+Inliers: 98.6
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/preds' --matcher 'loftr' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 1000/1000 [1:02:24<00:00,  3.74s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/preds_loftr' --num-preds 20 --recall-values 1 5 10 20
+100% 1000/1000 [00:02<00:00, 481.19it/s]
+R@1: 86.5, R@5: 89.7, R@10: 90.8, R@20: 91.5
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/preds_loftr' --z-data-path '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_sf_xs_L2/2025-12-29_12-29-33/z_data.torch'
+Computing L2 scores: 100% 1000/1000 [00:00<00:00, 1502796.13it/s]
+Computing PA scores: 100% 1000/1000 [00:00<00:00, 1051731.19it/s]
+Computing SUE scores: 100% 1000/1000 [00:00<00:00, 11823.80it/s]
+L2-distance: 99.1
+PA-score: 96.7
+SUE: 94.4
+Random: 86.3
+Inliers: 98.9
+/usr/bin/python3 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir megaloc_Dinov2_svox_sun_L2 --method=megaloc --backbone=Dinov2 --descriptors_dimension=8448 --image_size 512 512 --database_folder data/svox/images/test/gallery --queries_folder data/svox/images/test/queries_sun --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 15:48:15 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir megaloc_Dinov2_svox_sun_L2 --method=megaloc --backbone=Dinov2 --descriptors_dimension=8448 --image_size 512 512 --database_folder data/svox/images/test/gallery --queries_folder data/svox/images/test/queries_sun --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 15:48:15 Arguments: Namespace(positive_dist_threshold=25, method='megaloc', backbone='Dinov2', descriptors_dimension=8448, database_folder='data/svox/images/test/gallery', queries_folder='data/svox/images/test/queries_sun', num_workers=8, batch_size=32, log_dir='megaloc_Dinov2_svox_sun_L2', device='cuda', recall_values=[1, 5, 10, 20], no_labels=False, num_preds_to_save=20, save_only_wrong_preds=False, image_size=[512, 512], save_descriptors=False, save_for_uncertainty=True, distance_metric='L2', use_labels=True)
+2025-12-29 15:48:15 Testing with megaloc with a Dinov2 backbone and descriptors dimension 8448
+2025-12-29 15:48:15 The outputs are being saved in logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15
+Using cache found in /root/.cache/torch/hub/gmberton_MegaLoc_main
+Using cache found in /root/.cache/torch/hub/facebookresearch_dinov2_main
+/root/.cache/torch/hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/root/.cache/torch/hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/root/.cache/torch/hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+Searching test images in data/svox/images/test/gallery with glob()
+Searching test images in data/svox/images/test/queries_sun with glob()
+2025-12-29 15:48:20 Testing on < #queries: 854; #database: 17166 >
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 2, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+100% 537/537 [29:22<00:00,  3.28s/it]
+100% 854/854 [01:29<00:00,  9.54it/s]
+2025-12-29 16:19:13 Using L2 distance for retrieval
+/content/Visual-Place-Recognition-Project/VPR-methods-evaluation/main.py:116: DeprecationWarning: `in1d` is deprecated. Use `np.isin` instead.
+  if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
+2025-12-29 16:19:16 R@1: 97.2, R@5: 99.3, R@10: 99.5, R@20: 99.6
+2025-12-29 16:19:16 Saving final predictions
+Saving preds in logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/preds: 100% 854/854 [02:35<00:00,  5.50it/s]
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/preds' --matcher 'superpoint-lg' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 854/854 [50:35<00:00,  3.55s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/preds_superpoint-lg' --num-preds 20 --recall-values 1 5 10 20
+100% 854/854 [00:04<00:00, 184.09it/s]
+R@1: 96.0, R@5: 99.1, R@10: 99.4, R@20: 99.6
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/preds_superpoint-lg' --z-data-path '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/z_data.torch'
+Computing L2 scores: 100% 854/854 [00:00<00:00, 1480138.68it/s]
+Computing PA scores: 100% 854/854 [00:00<00:00, 970188.41it/s]
+Computing SUE scores: 100% 854/854 [00:00<00:00, 12148.99it/s]
+L2-distance: 99.2
+PA-score: 99.2
+SUE: 98.1
+Random: 96.5
+Inliers: 99.1
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/preds' --matcher 'superglue' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 854/854 [21:33<00:00,  1.51s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/preds_superglue' --num-preds 20 --recall-values 1 5 10 20
+100% 854/854 [00:02<00:00, 409.00it/s]
+R@1: 93.8, R@5: 98.7, R@10: 99.4, R@20: 99.6
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/preds_superglue' --z-data-path '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/z_data.torch'
+Computing L2 scores: 100% 854/854 [00:00<00:00, 1508818.71it/s]
+Computing PA scores: 100% 854/854 [00:00<00:00, 902478.11it/s]
+Computing SUE scores: 100% 854/854 [00:00<00:00, 11047.34it/s]
+L2-distance: 99.2
+PA-score: 99.2
+SUE: 98.1
+Random: 96.5
+Inliers: 99.1
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/preds' --matcher 'loftr' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 854/854 [53:02<00:00,  3.73s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/preds_loftr' --num-preds 20 --recall-values 1 5 10 20
+100% 854/854 [00:01<00:00, 620.15it/s]
+R@1: 97.3, R@5: 99.3, R@10: 99.5, R@20: 99.6
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/preds_loftr' --z-data-path '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_sun_L2/2025-12-29_15-48-15/z_data.torch'
+Computing L2 scores: 100% 854/854 [00:00<00:00, 1550621.48it/s]
+Computing PA scores: 100% 854/854 [00:00<00:00, 1039447.36it/s]
+Computing SUE scores: 100% 854/854 [00:00<00:00, 11845.06it/s]
+L2-distance: 99.2
+PA-score: 99.2
+SUE: 98.1
+Random: 96.5
+Inliers: 99.5
+/usr/bin/python3 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir megaloc_Dinov2_svox_night_L2 --method=megaloc --backbone=Dinov2 --descriptors_dimension=8448 --image_size 512 512 --database_folder data/svox/images/test/gallery --queries_folder data/svox/images/test/queries_night --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 18:27:58 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir megaloc_Dinov2_svox_night_L2 --method=megaloc --backbone=Dinov2 --descriptors_dimension=8448 --image_size 512 512 --database_folder data/svox/images/test/gallery --queries_folder data/svox/images/test/queries_night --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 18:27:58 Arguments: Namespace(positive_dist_threshold=25, method='megaloc', backbone='Dinov2', descriptors_dimension=8448, database_folder='data/svox/images/test/gallery', queries_folder='data/svox/images/test/queries_night', num_workers=8, batch_size=32, log_dir='megaloc_Dinov2_svox_night_L2', device='cuda', recall_values=[1, 5, 10, 20], no_labels=False, num_preds_to_save=20, save_only_wrong_preds=False, image_size=[512, 512], save_descriptors=False, save_for_uncertainty=True, distance_metric='L2', use_labels=True)
+2025-12-29 18:27:58 Testing with megaloc with a Dinov2 backbone and descriptors dimension 8448
+2025-12-29 18:27:58 The outputs are being saved in logs/megaloc_Dinov2_svox_night_L2/2025-12-29_18-27-58
+Using cache found in /root/.cache/torch/hub/gmberton_MegaLoc_main
+Using cache found in /root/.cache/torch/hub/facebookresearch_dinov2_main
+/root/.cache/torch/hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/root/.cache/torch/hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/root/.cache/torch/hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+Searching test images in data/svox/images/test/gallery with glob()
+Searching test images in data/svox/images/test/queries_night with glob()
+2025-12-29 18:28:04 Testing on < #queries: 823; #database: 17166 >
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 2, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+100% 537/537 [29:23<00:00,  3.28s/it]
+100% 823/823 [01:26<00:00,  9.52it/s]
+2025-12-29 18:58:54 Using L2 distance for retrieval
+/content/Visual-Place-Recognition-Project/VPR-methods-evaluation/main.py:116: DeprecationWarning: `in1d` is deprecated. Use `np.isin` instead.
+  if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
+2025-12-29 18:58:59 R@1: 96.5, R@5: 98.7, R@10: 99.0, R@20: 99.3
+2025-12-29 18:58:59 Saving final predictions
+Saving preds in logs/megaloc_Dinov2_svox_night_L2/2025-12-29_18-27-58/preds: 100% 823/823 [02:33<00:00,  5.37it/s]
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_18-27-58/preds' --matcher 'superpoint-lg' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+ 11% 94/823 [05:34<43:20,  3.57s/it]
+/usr/bin/python3 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir megaloc_Dinov2_svox_night_L2 --method=megaloc --backbone=Dinov2 --descriptors_dimension=8448 --image_size 512 512 --database_folder data/svox/images/test/gallery --queries_folder data/svox/images/test/queries_night --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 19:16:13 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir megaloc_Dinov2_svox_night_L2 --method=megaloc --backbone=Dinov2 --descriptors_dimension=8448 --image_size 512 512 --database_folder data/svox/images/test/gallery --queries_folder data/svox/images/test/queries_night --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 19:16:13 Arguments: Namespace(positive_dist_threshold=25, method='megaloc', backbone='Dinov2', descriptors_dimension=8448, database_folder='data/svox/images/test/gallery', queries_folder='data/svox/images/test/queries_night', num_workers=8, batch_size=32, log_dir='megaloc_Dinov2_svox_night_L2', device='cuda', recall_values=[1, 5, 10, 20], no_labels=False, num_preds_to_save=20, save_only_wrong_preds=False, image_size=[512, 512], save_descriptors=False, save_for_uncertainty=True, distance_metric='L2', use_labels=True)
+2025-12-29 19:16:13 Testing with megaloc with a Dinov2 backbone and descriptors dimension 8448
+2025-12-29 19:16:13 The outputs are being saved in logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13
+/usr/local/lib/python3.12/dist-packages/torch/hub.py:335: UserWarning: You are about to download and run code from an untrusted repository. In a future release, this won't be allowed. To add the repository to your trusted list, change the command to {calling_fn}(..., trust_repo=False) and a command prompt will appear asking for an explicit confirmation of trust, or load(..., trust_repo=True), which will assume that the prompt is to be answered with 'yes'. You can also use load(..., trust_repo='check') which will only prompt for confirmation if the repo is not already trusted. This will eventually be the default behaviour
+  warnings.warn(
+Downloading: "https://github.com/gmberton/MegaLoc/zipball/main" to /root/.cache/torch/hub/main.zip
+Downloading: "https://github.com/facebookresearch/dinov2/zipball/main" to /root/.cache/torch/hub/main.zip
+/root/.cache/torch/hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/root/.cache/torch/hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/root/.cache/torch/hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+Downloading: "https://github.com/gmberton/MegaLoc/releases/download/v1.0/megaloc.torch" to /root/.cache/torch/hub/checkpoints/megaloc.torch
+100% 872M/872M [02:04<00:00, 7.34MB/s]
+Searching test images in data/svox/images/test/gallery with glob()
+Searching test images in data/svox/images/test/queries_night with glob()
+2025-12-29 19:18:26 Testing on < #queries: 823; #database: 17166 >
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 2, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+100% 537/537 [28:52<00:00,  3.23s/it]
+100% 823/823 [01:24<00:00,  9.74it/s]
+2025-12-29 19:48:43 Using L2 distance for retrieval
+/Visual-Place-Recognition-Project/VPR-methods-evaluation/main.py:116: DeprecationWarning: `in1d` is deprecated. Use `np.isin` instead.
+  if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
+2025-12-29 19:48:47 R@1: 96.5, R@5: 98.7, R@10: 99.0, R@20: 99.3
+2025-12-29 19:48:47 Saving final predictions
+Saving preds in logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/preds: 100% 823/823 [02:29<00:00,  5.51it/s]
+/usr/bin/python3 match_queries_preds.py --preds-dir '/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/preds' --matcher 'superpoint-lg' --device 'cuda' --num-preds 20
+/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 4.96M/4.96M [00:00<00:00, 391MB/s]
+100% 45.3M/45.3M [00:01<00:00, 24.6MB/s]
+100% 823/823 [48:22<00:00,  3.53s/it]
+/usr/bin/python3 reranking.py --preds-dir '/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/preds' --inliers-dir '/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/preds_superpoint-lg' --num-preds 20 --recall-values 1 5 10 20
+100% 823/823 [00:04<00:00, 204.91it/s]
+R@1: 91.1, R@5: 97.4, R@10: 98.9, R@20: 99.3
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/preds' --inliers-dir '/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/preds_superpoint-lg' --z-data-path '/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/z_data.torch'
+Computing L2 scores: 100% 823/823 [00:00<00:00, 1516657.38it/s]
+Computing PA scores: 100% 823/823 [00:00<00:00, 1030729.23it/s]
+Computing SUE scores: 100% 823/823 [00:00<00:00, 11832.31it/s]
+L2-distance: 99.6
+PA-score: 99.3
+SUE: 98.6
+Random: 96.5
+Inliers: 99.6
+/usr/bin/python3 match_queries_preds.py --preds-dir '/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/preds' --matcher 'superglue' --device 'cuda' --num-preds 20
+/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/imatch-toolbox/immatch/modules/../../third_party/patch2pix/networks/ncn/model.py:233: SyntaxWarning: "is not" with 'str' literal. Did you mean "!="?
+  if checkpoint is not None and checkpoint is not '':
+/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/imatch-toolbox/immatch/modules/../../third_party/patch2pix/networks/ncn/model.py:264: SyntaxWarning: "is not" with 'str' literal. Did you mean "!="?
+  if checkpoint is not None and checkpoint is not '':
+100% 823/823 [20:54<00:00,  1.52s/it]
+/usr/bin/python3 reranking.py --preds-dir '/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/preds' --inliers-dir '/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/preds_superglue' --num-preds 20 --recall-values 1 5 10 20
+100% 823/823 [00:01<00:00, 420.87it/s]
+R@1: 90.5, R@5: 97.6, R@10: 98.7, R@20: 99.3
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/preds' --inliers-dir '/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/preds_superglue' --z-data-path '/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/z_data.torch'
+Computing L2 scores: 100% 823/823 [00:00<00:00, 836827.20it/s]
+Computing PA scores: 100% 823/823 [00:00<00:00, 543865.16it/s]
+Computing SUE scores: 100% 823/823 [00:00<00:00, 10630.92it/s]
+L2-distance: 99.6
+PA-score: 99.3
+SUE: 98.6
+Random: 96.5
+Inliers: 99.4
+/usr/bin/python3 match_queries_preds.py --preds-dir '/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/preds' --matcher 'loftr' --device 'cuda' --num-preds 20
+/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 44.2M/44.2M [00:03<00:00, 14.6MB/s]
+100% 823/823 [50:30<00:00,  3.68s/it]
+/usr/bin/python3 reranking.py --preds-dir '/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/preds' --inliers-dir '/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/preds_loftr' --num-preds 20 --recall-values 1 5 10 20
+100% 823/823 [00:01<00:00, 652.24it/s]
+R@1: 92.6, R@5: 98.5, R@10: 99.0, R@20: 99.3
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/preds' --inliers-dir '/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/preds_loftr' --z-data-path '/Visual-Place-Recognition-Project/logs/megaloc_Dinov2_svox_night_L2/2025-12-29_19-16-13/z_data.torch'
+Computing L2 scores: 100% 823/823 [00:00<00:00, 1498876.33it/s]
+Computing PA scores: 100% 823/823 [00:00<00:00, 980656.87it/s]
+Computing SUE scores: 100% 823/823 [00:00<00:00, 11767.78it/s]
+L2-distance: 99.6
+PA-score: 99.3
+SUE: 98.6
+Random: 96.5
+Inliers: 99.6
+
+--- NETVLAD ---
+/usr/bin/python3 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir netvlad_VGG16_tokyo_xs_L2 --method=netvlad --backbone=VGG16 --descriptors_dimension=4096 --image_size 512 512 --database_folder data/tokyo_xs/test/database --queries_folder data/tokyo_xs/test/queries --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 12:56:34 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir netvlad_VGG16_tokyo_xs_L2 --method=netvlad --backbone=VGG16 --descriptors_dimension=4096 --image_size 512 512 --database_folder data/tokyo_xs/test/database --queries_folder data/tokyo_xs/test/queries --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 12:56:34 Arguments: Namespace(positive_dist_threshold=25, method='netvlad', backbone='VGG16', descriptors_dimension=4096, database_folder='data/tokyo_xs/test/database', queries_folder='data/tokyo_xs/test/queries', num_workers=8, batch_size=32, log_dir='netvlad_VGG16_tokyo_xs_L2', device='cuda', recall_values=[1, 5, 10, 20], no_labels=False, num_preds_to_save=20, save_only_wrong_preds=False, image_size=[512, 512], save_descriptors=False, save_for_uncertainty=True, distance_metric='L2', use_labels=True)
+2025-12-29 12:56:34 Testing with netvlad with a VGG16 backbone and descriptors dimension 4096
+2025-12-29 12:56:34 The outputs are being saved in logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34
+--2025-12-29 12:56:34--  https://cvg-data.inf.ethz.ch/hloc/netvlad/Pitts30K_struct.mat
+Resolving cvg-data.inf.ethz.ch (cvg-data.inf.ethz.ch)... 129.132.114.72
+Connecting to cvg-data.inf.ethz.ch (cvg-data.inf.ethz.ch)|129.132.114.72|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 554551295 (529M)
+Saving to: ‘/root/.cache/torch/hub/netvlad/VGG16-NetVLAD-Pitts30K.mat’
+
+/root/.cache/torch/ 100%[===================>] 528.86M  29.5MB/s    in 19s     
+
+2025-12-29 12:56:53 (28.1 MB/s) - ‘/root/.cache/torch/hub/netvlad/VGG16-NetVLAD-Pitts30K.mat’ saved [554551295/554551295]
+
+Searching test images in data/tokyo_xs/test/database with glob()
+Searching test images in data/tokyo_xs/test/queries with glob()
+2025-12-29 12:57:00 Testing on < #queries: 315; #database: 12771 >
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 4, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+100%|█████████████████████████████████████████| 400/400 [06:29<00:00,  1.03it/s]
+100%|█████████████████████████████████████████| 315/315 [00:13<00:00, 23.61it/s]
+2025-12-29 13:03:44 Using L2 distance for retrieval
+/kaggle/working/Visual-Place-Recognition-Project/VPR-methods-evaluation/main.py:116: DeprecationWarning: `in1d` is deprecated. Use `np.isin` instead.
+  if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
+2025-12-29 13:03:44 R@1: 54.0, R@5: 64.4, R@10: 69.5, R@20: 74.6
+2025-12-29 13:03:44 Saving final predictions
+Saving preds in logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/preds: 100%|█
+/usr/bin/python3 match_queries_preds.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/preds' --matcher 'superpoint-lg' --device 'cuda' --num-preds 20
+/kaggle/working/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100%|██████████████████████████████████████| 4.96M/4.96M [00:00<00:00, 70.8MB/s]
+100%|███████████████████████████████████████| 45.3M/45.3M [00:00<00:00, 186MB/s]
+100%|█████████████████████████████████████████| 315/315 [19:25<00:00,  3.70s/it]
+/usr/bin/python3 reranking.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/preds_superpoint-lg' --num-preds 20 --recall-values 1 5 10 20
+100%|████████████████████████████████████████| 315/315 [00:01<00:00, 220.65it/s]
+R@1: 68.9, R@5: 71.7, R@10: 73.0, R@20: 74.6
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/preds_superpoint-lg' --z-data-path '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/z_data.torch'
+Computing L2 scores: 100%|███████████████| 315/315 [00:00<00:00, 1102842.87it/s]
+Computing PA scores: 100%|████████████████| 315/315 [00:00<00:00, 956702.22it/s]
+Computing SUE scores: 100%|████████████████| 315/315 [00:00<00:00, 11413.32it/s]
+L2-distance: 74.1
+PA-score: 76.8
+SUE: 70.0
+Random: 53.1
+Inliers: 98.5
+/usr/bin/python3 match_queries_preds.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/preds' --matcher 'superglue' --device 'cuda' --num-preds 20
+/kaggle/working/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+/kaggle/working/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/imatch-toolbox/immatch/modules/../../third_party/patch2pix/networks/ncn/model.py:233: SyntaxWarning: "is not" with 'str' literal. Did you mean "!="?
+  if checkpoint is not None and checkpoint is not '':
+/kaggle/working/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/imatch-toolbox/immatch/modules/../../third_party/patch2pix/networks/ncn/model.py:264: SyntaxWarning: "is not" with 'str' literal. Did you mean "!="?
+  if checkpoint is not None and checkpoint is not '':
+100%|█████████████████████████████████████████| 315/315 [06:53<00:00,  1.31s/it]
+/usr/bin/python3 reranking.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/preds_superglue' --num-preds 20 --recall-values 1 5 10 20
+100%|████████████████████████████████████████| 315/315 [00:00<00:00, 515.89it/s]
+R@1: 67.0, R@5: 71.1, R@10: 72.7, R@20: 74.6
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/preds_superglue' --z-data-path '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/z_data.torch'
+Computing L2 scores: 100%|███████████████| 315/315 [00:00<00:00, 1166112.76it/s]
+Computing PA scores: 100%|████████████████| 315/315 [00:00<00:00, 873235.80it/s]
+Computing SUE scores: 100%|████████████████| 315/315 [00:00<00:00, 11657.63it/s]
+L2-distance: 74.1
+PA-score: 76.8
+SUE: 70.0
+Random: 53.1
+Inliers: 98.3
+/usr/bin/python3 match_queries_preds.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/preds' --matcher 'loftr' --device 'cuda' --num-preds 20
+/kaggle/working/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100%|██████████████████████████████████████| 44.2M/44.2M [00:02<00:00, 20.4MB/s]
+100%|█████████████████████████████████████████| 315/315 [20:28<00:00,  3.90s/it]
+/usr/bin/python3 reranking.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/preds_loftr' --num-preds 20 --recall-values 1 5 10 20
+100%|████████████████████████████████████████| 315/315 [00:00<00:00, 639.25it/s]
+R@1: 68.9, R@5: 70.8, R@10: 73.0, R@20: 74.6
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/preds_loftr' --z-data-path '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_tokyo_xs_L2/2025-12-29_12-56-34/z_data.torch'
+Computing L2 scores: 100%|████████████████| 315/315 [00:00<00:00, 774446.52it/s]
+Computing PA scores: 100%|████████████████| 315/315 [00:00<00:00, 794471.29it/s]
+Computing SUE scores: 100%|████████████████| 315/315 [00:00<00:00, 12628.13it/s]
+L2-distance: 74.1
+PA-score: 76.8
+SUE: 70.0
+Random: 53.1
+Inliers: 98.7
+/usr/bin/python3 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir netvlad_VGG16_sf_xs_L2 --method=netvlad --backbone=VGG16 --descriptors_dimension=4096 --image_size 512 512 --database_folder data/sf_xs/test/database --queries_folder data/sf_xs/test/queries --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 13:52:23 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir netvlad_VGG16_sf_xs_L2 --method=netvlad --backbone=VGG16 --descriptors_dimension=4096 --image_size 512 512 --database_folder data/sf_xs/test/database --queries_folder data/sf_xs/test/queries --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 13:52:23 Arguments: Namespace(positive_dist_threshold=25, method='netvlad', backbone='VGG16', descriptors_dimension=4096, database_folder='data/sf_xs/test/database', queries_folder='data/sf_xs/test/queries', num_workers=8, batch_size=32, log_dir='netvlad_VGG16_sf_xs_L2', device='cuda', recall_values=[1, 5, 10, 20], no_labels=False, num_preds_to_save=20, save_only_wrong_preds=False, image_size=[512, 512], save_descriptors=False, save_for_uncertainty=True, distance_metric='L2', use_labels=True)
+2025-12-29 13:52:23 Testing with netvlad with a VGG16 backbone and descriptors dimension 4096
+2025-12-29 13:52:23 The outputs are being saved in logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23
+Searching test images in data/sf_xs/test/database with glob()
+Searching test images in data/sf_xs/test/queries with glob()
+2025-12-29 13:52:30 Testing on < #queries: 1000; #database: 27191 >
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 4, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+100%|█████████████████████████████████████████| 850/850 [14:04<00:00,  1.01it/s]
+100%|███████████████████████████████████████| 1000/1000 [00:41<00:00, 24.00it/s]
+2025-12-29 14:07:17 Using L2 distance for retrieval
+/kaggle/working/Visual-Place-Recognition-Project/VPR-methods-evaluation/main.py:116: DeprecationWarning: `in1d` is deprecated. Use `np.isin` instead.
+  if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
+2025-12-29 14:07:19 R@1: 42.2, R@5: 53.7, R@10: 60.8, R@20: 65.3
+2025-12-29 14:07:19 Saving final predictions
+Saving preds in logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/preds: 100%|█| 1
+/usr/bin/python3 match_queries_preds.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/preds' --matcher 'superpoint-lg' --device 'cuda' --num-preds 20
+/kaggle/working/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100%|█████████████████████████████████████| 1000/1000 [1:01:29<00:00,  3.69s/it]
+/usr/bin/python3 reranking.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/preds_superpoint-lg' --num-preds 20 --recall-values 1 5 10 20
+100%|██████████████████████████████████████| 1000/1000 [00:04<00:00, 223.47it/s]
+R@1: 62.3, R@5: 64.5, R@10: 64.9, R@20: 65.3
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/preds_superpoint-lg' --z-data-path '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/z_data.torch'
+Computing L2 scores: 100%|█████████████| 1000/1000 [00:00<00:00, 1681083.77it/s]
+Computing PA scores: 100%|█████████████| 1000/1000 [00:00<00:00, 1064814.42it/s]
+Computing SUE scores: 100%|██████████████| 1000/1000 [00:00<00:00, 12080.72it/s]
+L2-distance: 75.4
+PA-score: 69.6
+SUE: 59.8
+Random: 42.1
+Inliers: 98.8
+/usr/bin/python3 match_queries_preds.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/preds' --matcher 'superglue' --device 'cuda' --num-preds 20
+/kaggle/working/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100%|███████████████████████████████████████| 1000/1000 [21:04<00:00,  1.26s/it]
+/usr/bin/python3 reranking.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/preds_superglue' --num-preds 20 --recall-values 1 5 10 20
+100%|██████████████████████████████████████| 1000/1000 [00:01<00:00, 535.98it/s]
+R@1: 61.1, R@5: 64.4, R@10: 64.9, R@20: 65.3
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/preds_superglue' --z-data-path '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/z_data.torch'
+Computing L2 scores: 100%|██████████████| 1000/1000 [00:00<00:00, 891835.85it/s]
+Computing PA scores: 100%|██████████████| 1000/1000 [00:00<00:00, 740781.35it/s]
+Computing SUE scores: 100%|██████████████| 1000/1000 [00:00<00:00, 10263.75it/s]
+L2-distance: 75.4
+PA-score: 69.6
+SUE: 59.8
+Random: 42.1
+Inliers: 97.4
+/usr/bin/python3 match_queries_preds.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/preds' --matcher 'loftr' --device 'cuda' --num-preds 20
+/kaggle/working/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100%|█████████████████████████████████████| 1000/1000 [1:05:02<00:00,  3.90s/it]
+/usr/bin/python3 reranking.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/preds_loftr' --num-preds 20 --recall-values 1 5 10 20
+100%|██████████████████████████████████████| 1000/1000 [00:01<00:00, 629.33it/s]
+R@1: 61.5, R@5: 63.9, R@10: 64.6, R@20: 65.3
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/preds_loftr' --z-data-path '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_sf_xs_L2/2025-12-29_13-52-23/z_data.torch'
+Computing L2 scores: 100%|█████████████| 1000/1000 [00:00<00:00, 1537501.47it/s]
+Computing PA scores: 100%|█████████████| 1000/1000 [00:00<00:00, 1103764.21it/s]
+Computing SUE scores: 100%|██████████████| 1000/1000 [00:00<00:00, 12290.35it/s]
+L2-distance: 75.4
+PA-score: 69.6
+SUE: 59.8
+Random: 42.1
+Inliers: 97.9
+/usr/bin/python3 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir netvlad_VGG16_svox_sun_L2 --method=netvlad --backbone=VGG16 --descriptors_dimension=4096 --image_size 512 512 --database_folder data/svox/images/test/gallery --queries_folder data/svox/images/test/queries_sun --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 16:39:15 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir netvlad_VGG16_svox_sun_L2 --method=netvlad --backbone=VGG16 --descriptors_dimension=4096 --image_size 512 512 --database_folder data/svox/images/test/gallery --queries_folder data/svox/images/test/queries_sun --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 16:39:15 Arguments: Namespace(positive_dist_threshold=25, method='netvlad', backbone='VGG16', descriptors_dimension=4096, database_folder='data/svox/images/test/gallery', queries_folder='data/svox/images/test/queries_sun', num_workers=8, batch_size=32, log_dir='netvlad_VGG16_svox_sun_L2', device='cuda', recall_values=[1, 5, 10, 20], no_labels=False, num_preds_to_save=20, save_only_wrong_preds=False, image_size=[512, 512], save_descriptors=False, save_for_uncertainty=True, distance_metric='L2', use_labels=True)
+2025-12-29 16:39:15 Testing with netvlad with a VGG16 backbone and descriptors dimension 4096
+2025-12-29 16:39:15 The outputs are being saved in logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15
+Searching test images in data/svox/images/test/gallery with glob()
+Searching test images in data/svox/images/test/queries_sun with glob()
+2025-12-29 16:39:23 Testing on < #queries: 854; #database: 17166 >
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 4, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+100%|█████████████████████████████████████████| 537/537 [08:54<00:00,  1.01it/s]
+100%|█████████████████████████████████████████| 854/854 [00:35<00:00, 24.08it/s]
+2025-12-29 16:48:52 Using L2 distance for retrieval
+/kaggle/working/Visual-Place-Recognition-Project/VPR-methods-evaluation/main.py:116: DeprecationWarning: `in1d` is deprecated. Use `np.isin` instead.
+  if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
+2025-12-29 16:48:54 R@1: 37.1, R@5: 54.4, R@10: 61.9, R@20: 69.0
+2025-12-29 16:48:54 Saving final predictions
+Saving preds in logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/preds: 100%|█
+/usr/bin/python3 match_queries_preds.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/preds' --matcher 'superpoint-lg' --device 'cuda' --num-preds 20
+/kaggle/working/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100%|█████████████████████████████████████████| 854/854 [52:38<00:00,  3.70s/it]
+/usr/bin/python3 reranking.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/preds_superpoint-lg' --num-preds 20 --recall-values 1 5 10 20
+100%|████████████████████████████████████████| 854/854 [00:03<00:00, 222.15it/s]
+R@1: 65.1, R@5: 66.5, R@10: 67.9, R@20: 69.0
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/preds_superpoint-lg' --z-data-path '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/z_data.torch'
+Computing L2 scores: 100%|████████████████| 854/854 [00:00<00:00, 530735.76it/s]
+Computing PA scores: 100%|████████████████| 854/854 [00:00<00:00, 898854.61it/s]
+Computing SUE scores: 100%|████████████████| 854/854 [00:00<00:00, 11636.80it/s]
+L2-distance: 76.4
+PA-score: 67.7
+SUE: 57.7
+Random: 37.3
+Inliers: 98.2
+/usr/bin/python3 match_queries_preds.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/preds' --matcher 'superglue' --device 'cuda' --num-preds 20
+/kaggle/working/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100%|█████████████████████████████████████████| 854/854 [19:41<00:00,  1.38s/it]
+/usr/bin/python3 reranking.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/preds_superglue' --num-preds 20 --recall-values 1 5 10 20
+100%|████████████████████████████████████████| 854/854 [00:01<00:00, 471.48it/s]
+R@1: 64.3, R@5: 66.3, R@10: 67.4, R@20: 69.0
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/preds_superglue' --z-data-path '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/z_data.torch'
+Computing L2 scores: 100%|████████████████| 854/854 [00:00<00:00, 569284.11it/s]
+Computing PA scores: 100%|███████████████| 854/854 [00:00<00:00, 1024874.28it/s]
+Computing SUE scores: 100%|████████████████| 854/854 [00:00<00:00, 11398.11it/s]
+L2-distance: 76.4
+PA-score: 67.7
+SUE: 57.7
+Random: 37.3
+Inliers: 98.0
+/usr/bin/python3 match_queries_preds.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/preds' --matcher 'loftr' --device 'cuda' --num-preds 20
+/kaggle/working/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100%|█████████████████████████████████████████| 854/854 [55:09<00:00,  3.88s/it]
+/usr/bin/python3 reranking.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/preds_loftr' --num-preds 20 --recall-values 1 5 10 20
+100%|████████████████████████████████████████| 854/854 [00:01<00:00, 676.88it/s]
+R@1: 64.6, R@5: 66.9, R@10: 67.8, R@20: 69.0
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/preds_loftr' --z-data-path '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_sun_L2/2025-12-29_16-39-15/z_data.torch'
+Computing L2 scores: 100%|███████████████| 854/854 [00:00<00:00, 1499973.04it/s]
+Computing PA scores: 100%|███████████████| 854/854 [00:00<00:00, 1150637.85it/s]
+Computing SUE scores: 100%|████████████████| 854/854 [00:00<00:00, 11398.58it/s]
+L2-distance: 76.4
+PA-score: 67.7
+SUE: 57.7
+Random: 37.3
+Inliers: 99.0
+/usr/bin/python3 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir netvlad_VGG16_svox_night_L2 --method=netvlad --backbone=VGG16 --descriptors_dimension=4096 --image_size 512 512 --database_folder data/svox/images/test/gallery --queries_folder data/svox/images/test/queries_night --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 18:59:25 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir netvlad_VGG16_svox_night_L2 --method=netvlad --backbone=VGG16 --descriptors_dimension=4096 --image_size 512 512 --database_folder data/svox/images/test/gallery --queries_folder data/svox/images/test/queries_night --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 18:59:25 Arguments: Namespace(positive_dist_threshold=25, method='netvlad', backbone='VGG16', descriptors_dimension=4096, database_folder='data/svox/images/test/gallery', queries_folder='data/svox/images/test/queries_night', num_workers=8, batch_size=32, log_dir='netvlad_VGG16_svox_night_L2', device='cuda', recall_values=[1, 5, 10, 20], no_labels=False, num_preds_to_save=20, save_only_wrong_preds=False, image_size=[512, 512], save_descriptors=False, save_for_uncertainty=True, distance_metric='L2', use_labels=True)
+2025-12-29 18:59:25 Testing with netvlad with a VGG16 backbone and descriptors dimension 4096
+2025-12-29 18:59:25 The outputs are being saved in logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25
+Searching test images in data/svox/images/test/gallery with glob()
+Searching test images in data/svox/images/test/queries_night with glob()
+2025-12-29 18:59:32 Testing on < #queries: 823; #database: 17166 >
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 4, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+100%|█████████████████████████████████████████| 537/537 [08:54<00:00,  1.00it/s]
+100%|█████████████████████████████████████████| 823/823 [00:34<00:00, 23.87it/s]
+2025-12-29 19:09:02 Using L2 distance for retrieval
+/kaggle/working/Visual-Place-Recognition-Project/VPR-methods-evaluation/main.py:116: DeprecationWarning: `in1d` is deprecated. Use `np.isin` instead.
+  if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
+2025-12-29 19:09:03 R@1: 8.5, R@5: 18.2, R@10: 22.7, R@20: 29.5
+2025-12-29 19:09:03 Saving final predictions
+Saving preds in logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/preds: 100%
+/usr/bin/python3 match_queries_preds.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/preds' --matcher 'superpoint-lg' --device 'cuda' --num-preds 20
+/kaggle/working/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100%|█████████████████████████████████████████| 823/823 [50:43<00:00,  3.70s/it]
+/usr/bin/python3 reranking.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/preds_superpoint-lg' --num-preds 20 --recall-values 1 5 10 20
+100%|████████████████████████████████████████| 823/823 [00:03<00:00, 228.30it/s]
+R@1: 24.3, R@5: 27.3, R@10: 28.6, R@20: 29.5
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/preds_superpoint-lg' --z-data-path '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/z_data.torch'
+Computing L2 scores: 100%|███████████████| 823/823 [00:00<00:00, 1296249.41it/s]
+Computing PA scores: 100%|███████████████| 823/823 [00:00<00:00, 1050810.41it/s]
+Computing SUE scores: 100%|████████████████| 823/823 [00:00<00:00, 12067.72it/s]
+L2-distance: 20.7
+PA-score: 11.8
+SUE: 21.3
+Random: 8.1
+Inliers: 98.0
+/usr/bin/python3 match_queries_preds.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/preds' --matcher 'superglue' --device 'cuda' --num-preds 20
+/kaggle/working/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100%|█████████████████████████████████████████| 823/823 [18:39<00:00,  1.36s/it]
+/usr/bin/python3 reranking.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/preds_superglue' --num-preds 20 --recall-values 1 5 10 20
+100%|████████████████████████████████████████| 823/823 [00:01<00:00, 472.19it/s]
+R@1: 24.8, R@5: 27.1, R@10: 28.4, R@20: 29.5
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/preds_superglue' --z-data-path '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/z_data.torch'
+Computing L2 scores: 100%|████████████████| 823/823 [00:00<00:00, 622414.75it/s]
+Computing PA scores: 100%|████████████████| 823/823 [00:00<00:00, 910074.40it/s]
+Computing SUE scores: 100%|████████████████| 823/823 [00:00<00:00, 11911.77it/s]
+L2-distance: 20.7
+PA-score: 11.8
+SUE: 21.3
+Random: 8.1
+Inliers: 96.4
+/usr/bin/python3 match_queries_preds.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/preds' --matcher 'loftr' --device 'cuda' --num-preds 20
+/kaggle/working/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100%|█████████████████████████████████████████| 823/823 [52:55<00:00,  3.86s/it]
+/usr/bin/python3 reranking.py --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/preds_loftr' --num-preds 20 --recall-values 1 5 10 20
+100%|████████████████████████████████████████| 823/823 [00:01<00:00, 635.72it/s]
+R@1: 25.3, R@5: 27.8, R@10: 28.7, R@20: 29.5
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/preds' --inliers-dir '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/preds_loftr' --z-data-path '/kaggle/working/Visual-Place-Recognition-Project/logs/netvlad_VGG16_svox_night_L2/2025-12-29_18-59-25/z_data.torch'
+Computing L2 scores: 100%|███████████████| 823/823 [00:00<00:00, 1429955.34it/s]
+Computing PA scores: 100%|███████████████| 823/823 [00:00<00:00, 1054985.39it/s]
+Computing SUE scores: 100%|████████████████| 823/823 [00:00<00:00, 11928.90it/s]
+L2-distance: 20.7
+PA-score: 11.8
+SUE: 21.3
+Random: 8.1
+Inliers: 97.8
+
+--- MIXVPR ---
+
+/usr/bin/python3 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir mixvpr_ResNet50_tokyo_xs_L2 --method=mixvpr --backbone=ResNet50 --descriptors_dimension=4096 --image_size 512 512 --database_folder data/tokyo_xs/test/database --queries_folder data/tokyo_xs/test/queries --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 19:23:02 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir mixvpr_ResNet50_tokyo_xs_L2 --method=mixvpr --backbone=ResNet50 --descriptors_dimension=4096 --image_size 512 512 --database_folder data/tokyo_xs/test/database --queries_folder data/tokyo_xs/test/queries --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 19:23:02 Arguments: Namespace(positive_dist_threshold=25, method='mixvpr', backbone='ResNet50', descriptors_dimension=4096, database_folder='data/tokyo_xs/test/database', queries_folder='data/tokyo_xs/test/queries', num_workers=8, batch_size=32, log_dir='mixvpr_ResNet50_tokyo_xs_L2', device='cuda', recall_values=[1, 5, 10, 20], no_labels=False, num_preds_to_save=20, save_only_wrong_preds=False, image_size=[512, 512], save_descriptors=False, save_for_uncertainty=True, distance_metric='L2', use_labels=True)
+2025-12-29 19:23:02 Testing with mixvpr with a ResNet50 backbone and descriptors dimension 4096
+2025-12-29 19:23:02 The outputs are being saved in logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02
+Downloading...
+From (original): https://drive.google.com/uc?id=1vuz3PvnR7vxnDDLQrdHJaOA04SQrtk5L
+From (redirected): https://drive.google.com/uc?id=1vuz3PvnR7vxnDDLQrdHJaOA04SQrtk5L&confirm=t&uuid=894e505a-3766-4b03-a5cc-53054657585f
+To: /content/Visual-Place-Recognition-Project/trained_models/mixvpr/resnet50_MixVPR_4096_channels(1024)_rows(4)
+100% 43.7M/43.7M [00:01<00:00, 38.8MB/s]
+Searching test images in data/tokyo_xs/test/database with glob()
+Searching test images in data/tokyo_xs/test/queries with glob()
+2025-12-29 19:23:06 Testing on < #queries: 315; #database: 12771 >
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 2, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+100% 400/400 [02:16<00:00,  2.94it/s]
+100% 315/315 [00:04<00:00, 67.63it/s]
+2025-12-29 19:25:27 Using L2 distance for retrieval
+/content/Visual-Place-Recognition-Project/VPR-methods-evaluation/main.py:116: DeprecationWarning: `in1d` is deprecated. Use `np.isin` instead.
+  if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
+2025-12-29 19:25:27 R@1: 76.5, R@5: 88.6, R@10: 92.1, R@20: 94.3
+2025-12-29 19:25:27 Saving final predictions
+Saving preds in logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/preds: 100% 315/315 [01:12<00:00,  4.34it/s]
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/preds' --matcher 'superpoint-lg' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 4.96M/4.96M [00:00<00:00, 100MB/s]
+100% 45.3M/45.3M [00:00<00:00, 126MB/s]
+100% 315/315 [18:46<00:00,  3.58s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/preds_superpoint-lg' --num-preds 20 --recall-values 1 5 10 20
+100% 315/315 [00:01<00:00, 213.71it/s]
+R@1: 89.2, R@5: 92.4, R@10: 94.0, R@20: 94.3
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/preds_superpoint-lg' --z-data-path '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/z_data.torch'
+Computing L2 scores: 100% 315/315 [00:00<00:00, 1274065.34it/s]
+Computing PA scores: 100% 315/315 [00:00<00:00, 951877.35it/s]
+Computing SUE scores: 100% 315/315 [00:00<00:00, 11215.48it/s]
+L2-distance: 98.4
+PA-score: 96.8
+SUE: 87.4
+Random: 76.1
+Inliers: 99.5
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/preds' --matcher 'superglue' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/imatch-toolbox/immatch/modules/../../third_party/patch2pix/networks/ncn/model.py:233: SyntaxWarning: "is not" with 'str' literal. Did you mean "!="?
+  if checkpoint is not None and checkpoint is not '':
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/imatch-toolbox/immatch/modules/../../third_party/patch2pix/networks/ncn/model.py:264: SyntaxWarning: "is not" with 'str' literal. Did you mean "!="?
+  if checkpoint is not None and checkpoint is not '':
+100% 315/315 [07:41<00:00,  1.46s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/preds_superglue' --num-preds 20 --recall-values 1 5 10 20
+100% 315/315 [00:00<00:00, 528.59it/s]
+R@1: 87.0, R@5: 92.4, R@10: 93.3, R@20: 94.3
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/preds_superglue' --z-data-path '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/z_data.torch'
+Computing L2 scores: 100% 315/315 [00:00<00:00, 1183876.13it/s]
+Computing PA scores: 100% 315/315 [00:00<00:00, 1070669.17it/s]
+Computing SUE scores: 100% 315/315 [00:00<00:00, 11628.49it/s]
+L2-distance: 98.4
+PA-score: 96.8
+SUE: 87.4
+Random: 76.1
+Inliers: 99.6
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/preds' --matcher 'loftr' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 44.2M/44.2M [00:02<00:00, 15.8MB/s]
+100% 315/315 [19:38<00:00,  3.74s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/preds_loftr' --num-preds 20 --recall-values 1 5 10 20
+100% 315/315 [00:00<00:00, 620.07it/s]
+R@1: 90.5, R@5: 92.7, R@10: 94.0, R@20: 94.3
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/preds_loftr' --z-data-path '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_tokyo_xs_L2/2025-12-29_19-23-02/z_data.torch'
+Computing L2 scores: 100% 315/315 [00:00<00:00, 1384911.70it/s]
+Computing PA scores: 100% 315/315 [00:00<00:00, 965088.21it/s]
+Computing SUE scores: 100% 315/315 [00:00<00:00, 11152.14it/s]
+L2-distance: 98.4
+PA-score: 96.8
+SUE: 87.4
+Random: 76.1
+Inliers: 99.5
+/usr/bin/python3 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir mixvpr_ResNet50_sf_xs_L2 --method=mixvpr --backbone=ResNet50 --descriptors_dimension=4096 --image_size 512 512 --database_folder data/sf_xs/test/database --queries_folder data/sf_xs/test/queries --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 20:14:29 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir mixvpr_ResNet50_sf_xs_L2 --method=mixvpr --backbone=ResNet50 --descriptors_dimension=4096 --image_size 512 512 --database_folder data/sf_xs/test/database --queries_folder data/sf_xs/test/queries --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-29 20:14:29 Arguments: Namespace(positive_dist_threshold=25, method='mixvpr', backbone='ResNet50', descriptors_dimension=4096, database_folder='data/sf_xs/test/database', queries_folder='data/sf_xs/test/queries', num_workers=8, batch_size=32, log_dir='mixvpr_ResNet50_sf_xs_L2', device='cuda', recall_values=[1, 5, 10, 20], no_labels=False, num_preds_to_save=20, save_only_wrong_preds=False, image_size=[512, 512], save_descriptors=False, save_for_uncertainty=True, distance_metric='L2', use_labels=True)
+2025-12-29 20:14:29 Testing with mixvpr with a ResNet50 backbone and descriptors dimension 4096
+2025-12-29 20:14:29 The outputs are being saved in logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29
+Searching test images in data/sf_xs/test/database with glob()
+Searching test images in data/sf_xs/test/queries with glob()
+2025-12-29 20:14:30 Testing on < #queries: 1000; #database: 27191 >
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 2, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+100% 850/850 [04:46<00:00,  2.97it/s]
+100% 1000/1000 [00:14<00:00, 67.15it/s]
+2025-12-29 20:19:31 Using L2 distance for retrieval
+/content/Visual-Place-Recognition-Project/VPR-methods-evaluation/main.py:116: DeprecationWarning: `in1d` is deprecated. Use `np.isin` instead.
+  if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
+2025-12-29 20:19:34 R@1: 69.6, R@5: 78.7, R@10: 81.1, R@20: 83.6
+2025-12-29 20:19:34 Saving final predictions
+Saving preds in logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/preds: 100% 1000/1000 [03:46<00:00,  4.42it/s]
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/preds' --matcher 'superpoint-lg' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 1000/1000 [59:25<00:00,  3.57s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/preds_superpoint-lg' --num-preds 20 --recall-values 1 5 10 20
+100% 1000/1000 [00:04<00:00, 215.67it/s]
+R@1: 80.6, R@5: 82.5, R@10: 83.3, R@20: 83.6
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/preds_superpoint-lg' --z-data-path '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/z_data.torch'
+Computing L2 scores: 100% 1000/1000 [00:00<00:00, 1493698.01it/s]
+Computing PA scores: 100% 1000/1000 [00:00<00:00, 1058365.88it/s]
+Computing SUE scores: 100% 1000/1000 [00:00<00:00, 11432.48it/s]
+L2-distance: 94.0
+PA-score: 90.0
+SUE: 82.5
+Random: 67.3
+Inliers: 98.5
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/preds' --matcher 'superglue' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 1000/1000 [23:41<00:00,  1.42s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/preds_superglue' --num-preds 20 --recall-values 1 5 10 20
+100% 1000/1000 [00:01<00:00, 542.42it/s]
+R@1: 79.2, R@5: 82.0, R@10: 83.2, R@20: 83.6
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/preds_superglue' --z-data-path '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/z_data.torch'
+Computing L2 scores: 100% 1000/1000 [00:00<00:00, 1435913.73it/s]
+Computing PA scores: 100% 1000/1000 [00:00<00:00, 1039222.99it/s]
+Computing SUE scores: 100% 1000/1000 [00:00<00:00, 11564.85it/s]
+L2-distance: 94.0
+PA-score: 90.0
+SUE: 82.5
+Random: 67.3
+Inliers: 97.6
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/preds' --matcher 'loftr' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 1000/1000 [1:02:59<00:00,  3.78s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/preds_loftr' --num-preds 20 --recall-values 1 5 10 20
+100% 1000/1000 [00:01<00:00, 600.41it/s]
+R@1: 79.6, R@5: 82.7, R@10: 83.4, R@20: 83.6
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/preds_loftr' --z-data-path '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_sf_xs_L2/2025-12-29_20-14-29/z_data.torch'
+Computing L2 scores: 100% 1000/1000 [00:00<00:00, 1433460.01it/s]
+Computing PA scores: 100% 1000/1000 [00:00<00:00, 1076014.37it/s]
+Computing SUE scores: 100% 1000/1000 [00:00<00:00, 12301.56it/s]
+L2-distance: 94.0
+PA-score: 90.0
+SUE: 82.5
+Random: 67.3
+Inliers: 98.2
+
+
+/usr/bin/python3 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir mixvpr_ResNet50_svox_night_L2 --method=mixvpr --backbone=ResNet50 --descriptors_dimension=4096 --image_size 512 512 --database_folder data/svox/images/test/gallery --queries_folder data/svox/images/test/queries_night --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-30 07:22:08 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir mixvpr_ResNet50_svox_night_L2 --method=mixvpr --backbone=ResNet50 --descriptors_dimension=4096 --image_size 512 512 --database_folder data/svox/images/test/gallery --queries_folder data/svox/images/test/queries_night --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-30 07:22:08 Arguments: Namespace(positive_dist_threshold=25, method='mixvpr', backbone='ResNet50', descriptors_dimension=4096, database_folder='data/svox/images/test/gallery', queries_folder='data/svox/images/test/queries_night', num_workers=8, batch_size=32, log_dir='mixvpr_ResNet50_svox_night_L2', device='cuda', recall_values=[1, 5, 10, 20], no_labels=False, num_preds_to_save=20, save_only_wrong_preds=False, image_size=[512, 512], save_descriptors=False, save_for_uncertainty=True, distance_metric='L2', use_labels=True)
+2025-12-30 07:22:08 Testing with mixvpr with a ResNet50 backbone and descriptors dimension 4096
+2025-12-30 07:22:08 The outputs are being saved in logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08
+Downloading...
+From (original): https://drive.google.com/uc?id=1vuz3PvnR7vxnDDLQrdHJaOA04SQrtk5L
+From (redirected): https://drive.google.com/uc?id=1vuz3PvnR7vxnDDLQrdHJaOA04SQrtk5L&confirm=t&uuid=14b38eec-2e81-43d7-95d5-8e5ea79cd995
+To: /content/Visual-Place-Recognition-Project/trained_models/mixvpr/resnet50_MixVPR_4096_channels(1024)_rows(4)
+100% 43.7M/43.7M [00:00<00:00, 46.9MB/s]
+Searching test images in data/svox/images/test/gallery with glob()
+Searching test images in data/svox/images/test/queries_night with glob()
+2025-12-30 07:22:13 Testing on < #queries: 823; #database: 17166 >
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 2, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+100% 537/537 [02:56<00:00,  3.04it/s]
+100% 823/823 [00:13<00:00, 62.13it/s]
+2025-12-30 07:25:23 Using L2 distance for retrieval
+/content/Visual-Place-Recognition-Project/VPR-methods-evaluation/main.py:116: DeprecationWarning: `in1d` is deprecated. Use `np.isin` instead.
+  if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
+2025-12-30 07:25:25 R@1: 62.6, R@5: 80.2, R@10: 83.8, R@20: 87.4
+2025-12-30 07:25:25 Saving final predictions
+Saving preds in logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/preds: 100% 823/823 [02:24<00:00,  5.68it/s]
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/preds' --matcher 'superpoint-lg' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 4.96M/4.96M [00:00<00:00, 385MB/s]
+100% 45.3M/45.3M [00:01<00:00, 42.6MB/s]
+100% 823/823 [46:36<00:00,  3.40s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/preds_superpoint-lg' --num-preds 20 --recall-values 1 5 10 20
+100% 823/823 [00:03<00:00, 217.93it/s]
+R@1: 81.2, R@5: 85.7, R@10: 86.4, R@20: 87.4
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/preds_superpoint-lg' --z-data-path '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/z_data.torch'
+Computing L2 scores: 100% 823/823 [00:00<00:00, 1476438.06it/s]
+Computing PA scores: 100% 823/823 [00:00<00:00, 1088587.89it/s]
+Computing SUE scores: 100% 823/823 [00:00<00:00, 12208.79it/s]
+L2-distance: 89.6
+PA-score: 82.9
+SUE: 76.3
+Random: 61.3
+Inliers: 98.3
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/preds' --matcher 'superglue' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/imatch-toolbox/immatch/modules/../../third_party/patch2pix/networks/ncn/model.py:233: SyntaxWarning: "is not" with 'str' literal. Did you mean "!="?
+  if checkpoint is not None and checkpoint is not '':
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/imatch-toolbox/immatch/modules/../../third_party/patch2pix/networks/ncn/model.py:264: SyntaxWarning: "is not" with 'str' literal. Did you mean "!="?
+  if checkpoint is not None and checkpoint is not '':
+100% 823/823 [19:41<00:00,  1.44s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/preds_superglue' --num-preds 20 --recall-values 1 5 10 20
+100% 823/823 [00:01<00:00, 470.40it/s]
+R@1: 81.0, R@5: 85.7, R@10: 86.9, R@20: 87.4
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/preds_superglue' --z-data-path '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/z_data.torch'
+Computing L2 scores: 100% 823/823 [00:00<00:00, 1406074.21it/s]
+Computing PA scores: 100% 823/823 [00:00<00:00, 1057895.25it/s]
+Computing SUE scores: 100% 823/823 [00:00<00:00, 12029.41it/s]
+L2-distance: 89.6
+PA-score: 82.9
+SUE: 76.3
+Random: 61.3
+Inliers: 98.6
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/preds' --matcher 'loftr' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 44.2M/44.2M [00:03<00:00, 14.9MB/s]
+100% 823/823 [48:15<00:00,  3.52s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/preds_loftr' --num-preds 20 --recall-values 1 5 10 20
+100% 823/823 [00:01<00:00, 631.27it/s]
+R@1: 82.0, R@5: 86.0, R@10: 86.9, R@20: 87.4
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/preds_loftr' --z-data-path '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_night_L2/2025-12-30_07-22-08/z_data.torch'
+Computing L2 scores: 100% 823/823 [00:00<00:00, 1416459.66it/s]
+Computing PA scores: 100% 823/823 [00:00<00:00, 886014.42it/s]
+Computing SUE scores: 100% 823/823 [00:00<00:00, 11489.64it/s]
+L2-distance: 89.6
+PA-score: 82.9
+SUE: 76.3
+Random: 61.3
+Inliers: 98.7
+
+
+/usr/bin/python3 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir mixvpr_ResNet50_svox_sun_L2 --method=mixvpr --backbone=ResNet50 --descriptors_dimension=4096 --image_size 512 512 --database_folder data/svox/images/test/gallery --queries_folder data/svox/images/test/queries_sun --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-30 07:20:21 VPR-methods-evaluation/main.py --num_workers 8 --batch_size 32 --log_dir mixvpr_ResNet50_svox_sun_L2 --method=mixvpr --backbone=ResNet50 --descriptors_dimension=4096 --image_size 512 512 --database_folder data/svox/images/test/gallery --queries_folder data/svox/images/test/queries_sun --distance_metric L2 --num_preds_to_save 20 --recall_values 1 5 10 20 --save_for_uncertainty
+2025-12-30 07:20:21 Arguments: Namespace(positive_dist_threshold=25, method='mixvpr', backbone='ResNet50', descriptors_dimension=4096, database_folder='data/svox/images/test/gallery', queries_folder='data/svox/images/test/queries_sun', num_workers=8, batch_size=32, log_dir='mixvpr_ResNet50_svox_sun_L2', device='cuda', recall_values=[1, 5, 10, 20], no_labels=False, num_preds_to_save=20, save_only_wrong_preds=False, image_size=[512, 512], save_descriptors=False, save_for_uncertainty=True, distance_metric='L2', use_labels=True)
+2025-12-30 07:20:21 Testing with mixvpr with a ResNet50 backbone and descriptors dimension 4096
+2025-12-30 07:20:21 The outputs are being saved in logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21
+Downloading...
+From (original): https://drive.google.com/uc?id=1vuz3PvnR7vxnDDLQrdHJaOA04SQrtk5L
+From (redirected): https://drive.google.com/uc?id=1vuz3PvnR7vxnDDLQrdHJaOA04SQrtk5L&confirm=t&uuid=1ba088c0-f41c-4a78-8832-7b4c01e389a0
+To: /content/Visual-Place-Recognition-Project/trained_models/mixvpr/resnet50_MixVPR_4096_channels(1024)_rows(4)
+100% 43.7M/43.7M [00:00<00:00, 87.4MB/s]
+Searching test images in data/svox/images/test/gallery with glob()
+Searching test images in data/svox/images/test/queries_sun with glob()
+2025-12-30 07:20:26 Testing on < #queries: 854; #database: 17166 >
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 2, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+100% 537/537 [03:15<00:00,  2.75it/s]
+100% 854/854 [00:13<00:00, 62.22it/s]
+2025-12-30 07:23:55 Using L2 distance for retrieval
+/content/Visual-Place-Recognition-Project/VPR-methods-evaluation/main.py:116: DeprecationWarning: `in1d` is deprecated. Use `np.isin` instead.
+  if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
+2025-12-30 07:23:57 R@1: 84.4, R@5: 92.7, R@10: 94.6, R@20: 95.4
+2025-12-30 07:23:57 Saving final predictions
+Saving preds in logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/preds: 100% 854/854 [02:39<00:00,  5.36it/s]
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/preds' --matcher 'superpoint-lg' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 4.96M/4.96M [00:00<00:00, 137MB/s]
+100% 45.3M/45.3M [00:00<00:00, 245MB/s]
+100% 854/854 [51:37<00:00,  3.63s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/preds_superpoint-lg' --num-preds 20 --recall-values 1 5 10 20
+100% 854/854 [00:04<00:00, 179.93it/s]
+R@1: 91.7, R@5: 94.4, R@10: 95.1, R@20: 95.4
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/preds_superpoint-lg' --z-data-path '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/z_data.torch'
+Computing L2 scores: 100% 854/854 [00:00<00:00, 1443746.72it/s]
+Computing PA scores: 100% 854/854 [00:00<00:00, 924132.00it/s]
+Computing SUE scores: 100% 854/854 [00:00<00:00, 9439.61it/s]
+L2-distance: 96.7
+PA-score: 94.1
+SUE: 89.4
+Random: 85.4
+Inliers: 99.0
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/preds' --matcher 'superglue' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/imatch-toolbox/immatch/modules/../../third_party/patch2pix/networks/ncn/model.py:233: SyntaxWarning: "is not" with 'str' literal. Did you mean "!="?
+  if checkpoint is not None and checkpoint is not '':
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/imatch-toolbox/immatch/modules/../../third_party/patch2pix/networks/ncn/model.py:264: SyntaxWarning: "is not" with 'str' literal. Did you mean "!="?
+  if checkpoint is not None and checkpoint is not '':
+100% 854/854 [21:39<00:00,  1.52s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/preds_superglue' --num-preds 20 --recall-values 1 5 10 20
+100% 854/854 [00:02<00:00, 383.38it/s]
+R@1: 89.6, R@5: 93.6, R@10: 95.0, R@20: 95.4
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/preds_superglue' --z-data-path '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/z_data.torch'
+Computing L2 scores: 100% 854/854 [00:00<00:00, 1405783.21it/s]
+Computing PA scores: 100% 854/854 [00:00<00:00, 1093053.29it/s]
+Computing SUE scores: 100% 854/854 [00:00<00:00, 11884.88it/s]
+L2-distance: 96.7
+PA-score: 94.1
+SUE: 89.4
+Random: 85.4
+Inliers: 99.0
+/usr/bin/python3 match_queries_preds.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/preds' --matcher 'loftr' --device 'cuda' --num-preds 20
+/content/Visual-Place-Recognition-Project/image-matching-models/matching/third_party/LightGlue/lightglue/lightglue.py:24: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
+100% 44.2M/44.2M [00:00<00:00, 144MB/s]
+100% 854/854 [54:09<00:00,  3.81s/it]
+/usr/bin/python3 reranking.py --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/preds_loftr' --num-preds 20 --recall-values 1 5 10 20
+100% 854/854 [00:01<00:00, 629.90it/s]
+R@1: 93.1, R@5: 94.6, R@10: 95.2, R@20: 95.4
+/usr/bin/python3 -m vpr_uncertainty.eval --preds-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/preds' --inliers-dir '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/preds_loftr' --z-data-path '/content/Visual-Place-Recognition-Project/logs/mixvpr_ResNet50_svox_sun_L2/2025-12-30_07-20-21/z_data.torch'
+Computing L2 scores: 100% 854/854 [00:00<00:00, 1304894.58it/s]
+Computing PA scores: 100% 854/854 [00:00<00:00, 957992.94it/s]
+Computing SUE scores: 100% 854/854 [00:00<00:00, 12057.14it/s]
+L2-distance: 96.7
+PA-score: 94.1
+SUE: 89.4
+Random: 85.4
+Inliers: 99.3
+
