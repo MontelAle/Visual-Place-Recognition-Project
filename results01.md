@@ -1,4 +1,4 @@
-# <span style="color:green">Task 1: image retrieval phase</span>
+# Task 1: image retrieval phase
 
 | Method   | Backbone | Dataset  | Metric |  R@1 |  R@5 | R@10 | R@20 | Time  |
 | -------- | -------- | -------- | ------ | ---: | ---: | ---: | ---: | ----- |
@@ -11,7 +11,8 @@
 | cosplace | resnet50 | tokyo_xs | L2     | 73.3 | 83.8 | 87.9 | 91.4 | 03:58 |
 | cosplace | resnet50 | tokyo_xs | cosine | 73.3 | 83.8 | 87.9 | 91.4 | 03:37 |
 
-# <span style="color:green">Task 2: Re-ranking phase</span>
+# Task 2: Re-ranking phase
+### NetVLAD (Backbone: vgg16)
 | Method | Backbone | Dataset | Metric | Matcher | R@1 | R@5 | R@10 | R@20 | Time |
 | :--- | :--- | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :--- |
 | netvlad | vgg16 | tokyo_xs | L2 | superpoint-lg | 68.9 | 71.7 | 73.0 | 74.6 | 04:46 |
@@ -27,6 +28,7 @@
 | netvlad | vgg16 | svox_night | L2 | superglue | 25.0 | 27.3 | 28.7 | 29.5 | 12:24 |
 | netvlad | vgg16 | svox_night | L2 | loftr | 25.5 | 27.6 | 28.9 | 29.5 | 11:48 |
 
+### MixVPR (Backbone: resnet50)
 | Method | Backbone | Dataset | Metric | Matcher | R@1 | R@5 | R@10 | R@20 | Time |
 | :--- | :--- | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :--- |
 | mixvpr | resnet50 | tokyo_xs | L2 | superpoint-lg | 89.2 | 92.1 | 93.7 | 94.3 | 10:55 |
@@ -35,9 +37,9 @@
 | mixvpr | resnet50 | sf_xs | L2 | superpoint-lg | 80.5 | 82.5 | 83.2 | 83.6 | 15:59 |
 | mixvpr | resnet50 | sf_xs | L2 | superglue | 79.3 | 82.2 | 83.2 | 83.6 | 15:59 |
 | mixvpr | resnet50 | sf_xs | L2 | loftr | 79.4 | 82.8 | 83.5 | 83.6 | 13:04 |
-| mixvpr | resnet50 | svox_sun | L2 | superpoint-lg | nan | nan | nan | nan | 00:00 |
-| mixvpr | resnet50 | svox_sun | L2 | superglue | nan | nan | nan | nan | 00:00 |
-| mixvpr | resnet50 | svox_sun | L2 | loftr | nan | nan | nan | nan | 00:00 |
+| mixvpr | resnet50 | svox_sun | L2 | superpoint-lg | 91.2 | 94.3 | 95.1 | 95.4 | 00:08 |
+| mixvpr | resnet50 | svox_sun | L2 | superglue | 89.7 | 93.7 | 95.1 | 95.4 | 00:14 |
+| mixvpr | resnet50 | svox_sun | L2 | loftr | 93.1 | 95.0 | 95.2 | 95.4 | 00:04 |
 | mixvpr | resnet50 | svox_night | L2 | superpoint-lg | 80.7 | 85.0 | 86.0 | 86.8 | 00:07 |
 | mixvpr | resnet50 | svox_night | L2 | superglue | 79.2 | 84.6 | 86.3 | 86.8 | 00:14 |
 | mixvpr | resnet50 | svox_night | L2 | loftr | 81.1 | 85.4 | 86.3 | 86.8 | 00:03 |
